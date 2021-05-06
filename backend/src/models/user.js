@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
@@ -50,6 +51,17 @@ const userSchema = new Schema({
   },
 });
 
+// Run before saving (not called when using findByIdAndUpdate)
+userSchema.pre("save", async function (next) {
+  const user = this;
+  if (user.isModified("password")) {
+    const salt = await bcrypt.genSalt(12);
+    const hash = await bcrypt.hash(user.password, salt);
+    user.password = hash;
+  }
+  next();
+});
+// Enforce unique fields
 userSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("User", userSchema);
