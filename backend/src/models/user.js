@@ -51,6 +51,19 @@ const userSchema = new Schema({
   },
 });
 
+// Reusable find by credentials method for user model
+userSchema.statics.findByCredentials = async (email, password) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error("Unable to login.");
+  }
+  const passwordIsValid = await bcrypt.compare(password, user.password);
+  if (!passwordIsValid) {
+    throw new Error("Unable to login.");
+  }
+  return user;
+};
+
 // Run before saving (not called when using findByIdAndUpdate)
 userSchema.pre("save", async function (next) {
   const user = this;
@@ -61,7 +74,9 @@ userSchema.pre("save", async function (next) {
   }
   next();
 });
-// Enforce unique fields
+
+// Improve unique enforcement error messages
 userSchema.plugin(uniqueValidator);
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+module.exports = User;
