@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    volumes:
+      - ./frontend:/home/node/frontend
+      - /home/node/frontend/node_modules
+    env_file: ./frontend/.env
+  backend:
+    # Path to service Dockerfile
+    build: ./backend
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    volumes:
+      - ./backend:/home/node/backend
+      # Prevents node modules from being used in bind mount
+      #   needs to use linux native node modules (not host's)
+      - /home/node/backend/node_modules
+    links:
+      # Ensures database starts up before backend starts
+      - db
+    env_file: ./backend/.env
+  db:
+    image: ${DB_IMAGE}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
