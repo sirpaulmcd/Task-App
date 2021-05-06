@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write **/*.{js,jsx}",
     "lint": "eslint . --ext .js --ext .jsx"
@@ -14,7 +14,10 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.12.7",
+    "mongoose-unique-validator": "^2.0.3",
+    "validator": "^13.6.0"
   },
   "devDependencies": {
     "eslint": "^7.24.0",
