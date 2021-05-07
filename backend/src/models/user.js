@@ -4,8 +4,9 @@ const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
 const jwt = require("jsonwebtoken");
 
-const Schema = mongoose.Schema;
+//#region Schema ==============================================================
 
+const Schema = mongoose.Schema;
 const userSchema = new Schema({
   name: {
     type: String,
@@ -60,7 +61,12 @@ const userSchema = new Schema({
   ],
 });
 
+//#endregion
+
+//#region Instance methods ====================================================
+
 const writeRefreshCookies = (res, refreshToken) => {
+  // Append refresh token to response in cookies
   res.cookie("refresh_jwt", refreshToken, {
     httpOnly: true,
     // secure: process.env.PRODUCTION,
@@ -76,8 +82,8 @@ const writeRefreshCookies = (res, refreshToken) => {
 };
 
 userSchema.methods.generateRefreshToken = async function (res) {
-  const user = this;
   // Generate refresh token
+  const user = this;
   const refreshToken = jwt.sign(
     { _id: user._id.toString() },
     process.env.REFRESH_TOKEN_SECRET,
@@ -94,8 +100,8 @@ userSchema.methods.deleteRefreshToken = async function (
   currentRefreshToken,
   res
 ) {
-  const user = this;
   // Remove current refresh token from database
+  const user = this;
   user.refreshTokens = user.refreshTokens.filter((refreshToken) => {
     return refreshToken.refreshToken !== currentRefreshToken;
   });
@@ -112,8 +118,8 @@ userSchema.methods.deleteAllRefreshTokens = async function (req, res) {
   writeRefreshCookies(res, "");
 };
 
-// Generate access token
 userSchema.methods.generateAccessToken = function () {
+  // Generate access token
   const user = this;
   const accessToken = jwt.sign(
     { _id: user._id.toString() },
@@ -123,15 +129,29 @@ userSchema.methods.generateAccessToken = function () {
   return accessToken;
 };
 
-// Generate access and refresh tokens
 userSchema.methods.generateTokens = async function (res) {
+  // Generate access and refresh tokens
   const user = this;
   await user.generateRefreshToken(res);
   return user.generateAccessToken();
 };
 
-// Reusable find by credentials method for user model
+userSchema.methods.toJSON = function () {
+  // Called whenever JSON.stringify() is used on this object
+  // Hides
+  const user = this;
+  const userObject = user.toObject();
+  delete userObject.password;
+  delete userObject.refreshTokens;
+  return userObject;
+};
+
+//#endregion
+
+//#region Static methods ======================================================
+
 userSchema.statics.findByCredentials = async (email, password) => {
+  // Reusable find by credentials method for user model
   const user = await User.findOne({ email });
   if (!user) {
     throw new Error("Unable to login.");
@@ -143,8 +163,12 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user;
 };
 
-// Run before saving (not called when using findByIdAndUpdate)
+//#endregion
+
+//#region Middleware ==========================================================
+
 userSchema.pre("save", async function (next) {
+  // Run before saving (not called when using findByIdAndUpdate)
   const user = this;
   if (user.isModified("password")) {
     const salt = await bcrypt.genSalt(12);
@@ -156,6 +180,8 @@ userSchema.pre("save", async function (next) {
 
 // Improve unique enforcement error messages
 userSchema.plugin(uniqueValidator);
+
+//#endregion
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
