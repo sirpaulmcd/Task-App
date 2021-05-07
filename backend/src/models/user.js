@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
+const jwt = require("jsonwebtoken");
 
 const Schema = mongoose.Schema;
 
@@ -49,7 +50,85 @@ const userSchema = new Schema({
     maxlength: 64,
     trim: true,
   },
+  refreshTokens: [
+    {
+      refreshToken: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
+
+const writeRefreshCookies = (res, refreshToken) => {
+  res.cookie("refresh_jwt", refreshToken, {
+    httpOnly: true,
+    // secure: process.env.PRODUCTION,
+    path: "/users/refresh",
+    //domain: 'example.com', //set your domain
+  });
+  res.cookie("logout_jwt", refreshToken, {
+    httpOnly: true,
+    // secure: process.env.PRODUCTION,
+    path: "/users/logout",
+    //domain: 'example.com', //set your domain
+  });
+};
+
+userSchema.methods.generateRefreshToken = async function (res) {
+  const user = this;
+  // Generate refresh token
+  const refreshToken = jwt.sign(
+    { _id: user._id.toString() },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "7 days" }
+  );
+  // Save refresh token in database
+  user.refreshTokens = user.refreshTokens.concat({ refreshToken });
+  await user.save();
+  // Append refresh token to response as cookies
+  writeRefreshCookies(res, refreshToken);
+};
+
+userSchema.methods.deleteRefreshToken = async function (
+  currentRefreshToken,
+  res
+) {
+  const user = this;
+  // Remove current refresh token from database
+  user.refreshTokens = user.refreshTokens.filter((refreshToken) => {
+    return refreshToken.refreshToken !== currentRefreshToken;
+  });
+  await user.save();
+  // Overwrite cookie refresh tokens with blank string
+  writeRefreshCookies(res, "");
+};
+
+userSchema.methods.deleteAllRefreshTokens = async function (req, res) {
+  // Delete all refresh tokens for user in database
+  req.user.refreshTokens = [];
+  await req.user.save();
+  // Overwrite cookie refresh tokens with blank string
+  writeRefreshCookies(res, "");
+};
+
+// Generate access token
+userSchema.methods.generateAccessToken = function () {
+  const user = this;
+  const accessToken = jwt.sign(
+    { _id: user._id.toString() },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "15 minutes" }
+  );
+  return accessToken;
+};
+
+// Generate access and refresh tokens
+userSchema.methods.generateTokens = async function (res) {
+  const user = this;
+  await user.generateRefreshToken(res);
+  return user.generateAccessToken();
+};
 
 // Reusable find by credentials method for user model
 userSchema.statics.findByCredentials = async (email, password) => {
