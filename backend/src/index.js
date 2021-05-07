@@ -9,17 +9,22 @@ const backendPort = process.env.BACKEND_PORT || 8000;
 
 const app = express();
 
-//#region Middleware
+//#region Middleware ==========================================================
+
 app.use(cookieParser());
 app.use(express.json());
+
 //#endregion
 
-//#region Routers
+//#region Routers =============================================================
+
 app.use(taskRouter);
 app.use(userRouter);
+
 //#endregion
 
-//#region Connections
+//#region Connections =========================================================
+
 connectToDatabase()
   .then(() => {
     app.listen(backendPort, () => {
@@ -29,4 +34,5 @@ connectToDatabase()
   .catch((error) => {
     console.log(error);
   });
+
 //#endregion
