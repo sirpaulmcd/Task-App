@@ -78,9 +78,9 @@ router.get("/users/me", auth, async (req, res) => {
 });
 
 /**
- * Update user
+ * Update self
  */
-router.patch("/users/:id", async (req, res) => {
+router.patch("/users/me", auth, async (req, res) => {
   // Check that only valid properties are being updated
   const updatedProperties = Object.keys(req.body);
   const validProperties = ["name", "username", "email", "password"];
@@ -94,15 +94,11 @@ router.patch("/users/:id", async (req, res) => {
   }
   // Update user and respond
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).send();
-    }
     updatedProperties.forEach((property) => {
-      user[property] = req.body[property];
+      req.user[property] = req.body[property];
     });
-    await user.save();
-    res.send(user);
+    await req.user.save();
+    res.send(req.user);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -121,7 +117,7 @@ router.delete("/users/me", auth, async (req, res) => {
 });
 
 /**
- * Logout user from current session
+ * Logout self from current session
  */
 router.post("/users/logout", auth, async (req, res) => {
   try {
@@ -137,7 +133,7 @@ router.post("/users/logout", auth, async (req, res) => {
 });
 
 /**
- * Logout user from all sessions
+ * Logout self from all sessions
  */
 router.post("/users/logoutAll", auth, async (req, res) => {
   try {
@@ -180,7 +176,38 @@ router.get("/users/:id", async (req, res) => {
 });
 
 /**
- * Delete user
+ * Update user by ID
+ */
+router.patch("/users/:id", async (req, res) => {
+  // Check that only valid properties are being updated
+  const updatedProperties = Object.keys(req.body);
+  const validProperties = ["name", "username", "email", "password"];
+  const updatedPropertiesAreValid = updatedProperties.every((property) => {
+    return validProperties.includes(property);
+  });
+  if (!updatedPropertiesAreValid) {
+    return res
+      .status(400)
+      .send({ error: "Attempted to update invalid property." });
+  }
+  // Update user and respond
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    updatedProperties.forEach((property) => {
+      user[property] = req.body[property];
+    });
+    await user.save();
+    res.send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+/**
+ * Delete user by ID
  */
 router.delete("/users/:id", async (req, res) => {
   try {
