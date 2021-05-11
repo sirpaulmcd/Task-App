@@ -4,6 +4,8 @@ const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
 const jwt = require("jsonwebtoken");
 
+const Task = require("./task");
+
 //#region Schema ==============================================================
 
 const Schema = mongoose.Schema;
@@ -65,6 +67,11 @@ const userSchema = new Schema({
 
 //#region Instance methods ====================================================
 
+/**
+ * Writes/appends refresh token cookies to the response.
+ * @param {*} res Response to be sent to the user.
+ * @param {String} refreshToken Refresh token to be written.
+ */
 const writeRefreshCookies = (res, refreshToken) => {
   // Append refresh token to response in cookies
   res.cookie("refresh_jwt", refreshToken, {
@@ -81,6 +88,10 @@ const writeRefreshCookies = (res, refreshToken) => {
   });
 };
 
+/**
+ * Generates a new refresh jwt token and appends it to the response.
+ * @param {*} res Response to be sent to the user.
+ */
 userSchema.methods.generateRefreshToken = async function (res) {
   // Generate refresh token
   const user = this;
@@ -96,6 +107,11 @@ userSchema.methods.generateRefreshToken = async function (res) {
   writeRefreshCookies(res, refreshToken);
 };
 
+/**
+ * Deletes the current refresh token from the db and overwrites related cookies.
+ * @param {*} currentRefreshToken Current, but aged, refresh token.
+ * @param {*} res Response to be sent to the user.
+ */
 userSchema.methods.deleteRefreshToken = async function (
   currentRefreshToken,
   res
@@ -110,6 +126,10 @@ userSchema.methods.deleteRefreshToken = async function (
   writeRefreshCookies(res, "");
 };
 
+/**
+ * Removes invalid refresh tokens from the database. Typically used to check
+ * whether stored tokens have expired.
+ */
 userSchema.methods.deleteInvalidRefreshTokens = async function () {
   const user = this;
   user.refreshTokens = user.refreshTokens.filter((refreshToken) => {
@@ -123,6 +143,12 @@ userSchema.methods.deleteInvalidRefreshTokens = async function () {
   await user.save();
 };
 
+/**
+ * Deletes all of the user's refresh tokens from the database (i.e. logs them
+ * out of all sessions).
+ * @param {*} req Request sent by the user.
+ * @param {*} res Response sent to the user.
+ */
 userSchema.methods.deleteAllRefreshTokens = async function (req, res) {
   // Delete all refresh tokens for user in database
   req.user.refreshTokens = [];
@@ -131,6 +157,10 @@ userSchema.methods.deleteAllRefreshTokens = async function (req, res) {
   writeRefreshCookies(res, "");
 };
 
+/**
+ * Generates a new access token.
+ * @returns Access token string.
+ */
 userSchema.methods.generateAccessToken = function () {
   // Generate access token
   const user = this;
@@ -142,6 +172,12 @@ userSchema.methods.generateAccessToken = function () {
   return accessToken;
 };
 
+/**
+ * Generates new access and refresh tokens for the user. Returns access token
+ * and appends refresh tokens as cookies on response.
+ * @param {*} res Response sent to the user.
+ * @returns Access token string.
+ */
 userSchema.methods.generateTokens = async function (res) {
   // Generate access and refresh tokens
   const user = this;
@@ -149,8 +185,12 @@ userSchema.methods.generateTokens = async function (res) {
   return user.generateAccessToken();
 };
 
+/**
+ * Called whenever JSON.stringify() is used on this object. Used to hide
+ * private fields when a user object is sent in the response.
+ * @returns User object with only public fields.
+ */
 userSchema.methods.toJSON = function () {
-  // Called whenever JSON.stringify() is used on this object
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;
@@ -162,8 +202,13 @@ userSchema.methods.toJSON = function () {
 
 //#region Static methods ======================================================
 
+/**
+ * Finds and returns a user given a username and password.
+ * @param {*} email Email of the user.
+ * @param {*} password Password of the user.
+ * @returns User object associated with credentials.
+ */
 userSchema.statics.findByCredentials = async (email, password) => {
-  // Reusable find by credentials method for user model
   const user = await User.findOne({ email });
   if (!user) {
     throw new Error("Unable to login.");
@@ -179,6 +224,9 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
 //#region References ==========================================================
 
+/**
+ * Virtually references users with their related tasks.
+ */
 userSchema.virtual("tasks", {
   ref: "Task",
   localField: "_id",
@@ -189,8 +237,12 @@ userSchema.virtual("tasks", {
 
 //#region Middleware ==========================================================
 
+/**
+ * Called before saving (not called when using findByIdAndUpdate). Used to hash
+ * and salt password before storing in database.
+ */
 userSchema.pre("save", async function (next) {
-  // Run before saving (not called when using findByIdAndUpdate)
+  // Run before saving
   const user = this;
   if (user.isModified("password")) {
     const salt = await bcrypt.genSalt(12);
@@ -200,7 +252,19 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Improve unique enforcement error messages
+/**
+ * Called before removing. Used to delete a user's tasks when their account is
+ * deleted.
+ */
+userSchema.pre("remove", async function (next) {
+  const user = this;
+  await Task.deleteMany({ owner: user._id });
+  next();
+});
+
+/**
+ * Improves the error message for unique field enforcement.
+ */
 userSchema.plugin(uniqueValidator);
 
 //#endregion
