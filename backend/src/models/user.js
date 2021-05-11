@@ -110,6 +110,19 @@ userSchema.methods.deleteRefreshToken = async function (
   writeRefreshCookies(res, "");
 };
 
+userSchema.methods.deleteInvalidRefreshTokens = async function () {
+  const user = this;
+  user.refreshTokens = user.refreshTokens.filter((refreshToken) => {
+    try {
+      jwt.verify(refreshToken.refreshToken, process.env.REFRESH_TOKEN_SECRET);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  });
+  await user.save();
+};
+
 userSchema.methods.deleteAllRefreshTokens = async function (req, res) {
   // Delete all refresh tokens for user in database
   req.user.refreshTokens = [];
@@ -138,7 +151,6 @@ userSchema.methods.generateTokens = async function (res) {
 
 userSchema.methods.toJSON = function () {
   // Called whenever JSON.stringify() is used on this object
-  // Hides
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;

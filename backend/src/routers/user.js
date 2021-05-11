@@ -55,10 +55,12 @@ router.post("/users/refresh", async (req, res) => {
     if (!user) {
       throw new Error();
     }
-    // Delete previous refresh token
+    // Delete invalid/expired refresh tokens for user
+    await user.deleteInvalidRefreshTokens();
+    // Delete current refresh token
     req.user = user;
     await user.deleteRefreshToken(refreshToken, res);
-    // Generate new access and refresh tokens
+    // Generate and return new access and refresh tokens (extend expiration period)
     const accessToken = await user.generateTokens(res);
     res.send({ user, accessToken });
   } catch (error) {
