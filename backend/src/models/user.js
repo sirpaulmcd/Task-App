@@ -177,6 +177,16 @@ userSchema.statics.findByCredentials = async (email, password) => {
 
 //#endregion
 
+//#region References ==========================================================
+
+userSchema.virtual("tasks", {
+  ref: "Task",
+  localField: "_id",
+  foreignField: "owner",
+});
+
+//#endregion
+
 //#region Middleware ==========================================================
 
 userSchema.pre("save", async function (next) {
