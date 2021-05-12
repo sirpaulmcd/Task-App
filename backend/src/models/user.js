@@ -53,6 +53,9 @@ const userSchema = new mongoose.Schema(
       maxlength: 64,
       trim: true,
     },
+    avatar: {
+      type: Buffer,
+    },
     refreshTokens: [
       {
         refreshToken: {
