@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
+const sharp = require("sharp");
 
 const auth = require("../middleware/auth");
 const User = require("../models/user");
@@ -171,7 +172,13 @@ router.post(
   auth,
   upload.single("avatar"),
   async (req, res) => {
-    req.user.avatar = req.file.buffer;
+    // Convert image file to png and resize
+    const buffer = await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toBuffer();
+    // Save in db
+    req.user.avatar = buffer;
     await req.user.save();
     res.send();
   },
@@ -190,6 +197,22 @@ router.delete("/users/me/avatar", auth, async (req, res) => {
     res.send();
   } catch (error) {
     res.status(500).send();
+  }
+});
+
+/**
+ * Get avatar
+ */
+router.get("/users/:id/avatar", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || !user.avatar) {
+      throw new Error();
+    }
+    res.set("Content-Type", "image/png");
+    res.send(user.avatar);
+  } catch (error) {
+    res.status(404).send();
   }
 });
 
