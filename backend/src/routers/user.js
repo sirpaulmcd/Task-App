@@ -31,6 +31,18 @@ const upload = multer({
  */
 router.post("/users", async (req, res) => {
   try {
+    // Check that only valid properties exist on request
+    const requestProperties = Object.keys(req.body);
+    const validProperties = ["name", "username", "email", "password"];
+    const requestPropertiesAreValid = requestProperties.every((property) => {
+      return validProperties.includes(property);
+    });
+    if (!requestPropertiesAreValid) {
+      return res
+        .status(400)
+        .send({ error: "Attempted to update invalid property." });
+    }
+    // Create new user and save in db
     const user = new User(req.body);
     const accessToken = await user.generateTokens(res);
     res.status(201).send({ user, accessToken });
