@@ -22,7 +22,7 @@ services:
     links:
       # Ensures database starts up before backend starts
       - db
-    env_file: ./backend/.env
+    env_file: ./backend/config/.env
   db:
     image: ${DB_IMAGE}
     ports:

@@ -5,9 +5,10 @@ node_modules/
 build/
 
 # secrets (remove exceptions when in production) 
-.env*
+*.env*
 !frontend/.env
-!backend/.env
+!backend/config/.env
+!backend/config/test.env
 
 # misc
 **/.DS_Store
