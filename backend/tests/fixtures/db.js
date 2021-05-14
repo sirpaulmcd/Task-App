@@ -29,6 +29,28 @@ const existingUserOne = {
   ],
 };
 
+const existingUserTwoId = new mongoose.Types.ObjectId();
+const existingUserTwoAccessToken = jwt.sign(
+  { _id: existingUserTwoId },
+  process.env.ACCESS_TOKEN_SECRET
+);
+const existingUserTwoRefreshToken = jwt.sign(
+  { _id: existingUserTwoId },
+  process.env.REFRESH_TOKEN_SECRET
+);
+const existingUserTwo = {
+  _id: existingUserTwoId,
+  name: "William Butcher",
+  username: "BillyBoy",
+  email: "downwithsupes@cia.com",
+  password: "test1234",
+  refreshTokens: [
+    {
+      refreshToken: existingUserTwoRefreshToken,
+    },
+  ],
+};
+
 const newUserCreationObject = {
   name: "Jeff Goldblum",
   username: "FlyGuy",
@@ -40,12 +62,17 @@ const newUserCreationObject = {
 
 //#region Setup and Teardown ==================================================
 
+/**
+ * The `--runInBand` flag is used during testing because too many tests running
+ * on the database async can result in duplicate errors.
+ */
 const initializeDatabase = async () => {
-  // Clear database of users and tasks
+  // Clear database
   await User.deleteMany({}).exec();
   await Task.deleteMany({}).exec();
-  // Add existing user One
+  // Add test users
   await new User(existingUserOne).save();
+  await new User(existingUserTwo).save();
 };
 
 const disconnectFromDatabase = async () => {
@@ -62,4 +89,7 @@ module.exports = {
   existingUserOne,
   existingUserOneAccessToken,
   existingUserOneRefreshToken,
+  existingUserTwo,
+  existingUserTwoAccessToken,
+  existingUserTwoRefreshToken,
 };
