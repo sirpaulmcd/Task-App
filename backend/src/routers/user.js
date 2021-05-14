@@ -98,6 +98,22 @@ router.post("/users/refresh", async (req, res) => {
   }
 });
 
+/**
+ * Get avatar
+ */
+router.get("/users/:id/avatar", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || !user.avatar) {
+      throw new Error();
+    }
+    res.set("Content-Type", "image/png");
+    res.send(user.avatar);
+  } catch (error) {
+    res.status(404).send();
+  }
+});
+
 //#endregion
 
 //#region Private routes ======================================================
@@ -157,10 +173,13 @@ router.post("/users/logout", auth, async (req, res) => {
     if (!refreshToken) {
       throw new Error();
     }
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     await req.user.deleteRefreshToken(refreshToken, res);
+    await User.writeRefreshCookies(res, "");
+
     res.send({ accessToken: "" });
   } catch (error) {
-    res.status(500).send();
+    res.status(500).send(error);
   }
 });
 
@@ -209,22 +228,6 @@ router.delete("/users/me/avatar", auth, async (req, res) => {
     res.send();
   } catch (error) {
     res.status(500).send();
-  }
-});
-
-/**
- * Get avatar
- */
-router.get("/users/:id/avatar", auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user || !user.avatar) {
-      throw new Error();
-    }
-    res.set("Content-Type", "image/png");
-    res.send(user.avatar);
-  } catch (error) {
-    res.status(404).send();
   }
 });
 

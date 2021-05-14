@@ -8,30 +8,19 @@ const User = require("../src/models/user");
 
 //#region Test objects ========================================================
 
-const existingUserId = new mongoose.Types.ObjectId();
-
-const existingUserAccessToken = jwt.sign(
-  { _id: existingUserId },
-  process.env.ACCESS_TOKEN_SECRET
-);
-
-const existingUser = {
-  _id: existingUserId,
+const existingUserCreationObject = {
   name: "Michael Stevens",
   username: "Vsauce",
   email: "thisismyemail@orisit.com",
   password: "test1234",
-  tokens: [
-    {
-      token: jwt.sign(
-        { _id: existingUserId },
-        process.env.REFRESH_TOKEN_SECRET
-      ),
-    },
-  ],
 };
 
-const newUser = {
+let existingUser;
+let existingUserAccessToken;
+let existingUserRefreshJwtCookie;
+let existingUserLogoutJwtCookie;
+
+const newUserCreationObject = {
   name: "Jeff Goldblum",
   username: "FlyGuy",
   email: "jeff@test.com",
@@ -47,12 +36,20 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  // Clear database of users
   await User.deleteMany();
-  await new User(existingUser).save();
+  // Add existing user
+  const response = await request(app)
+    .post("/users")
+    .send(existingUserCreationObject);
+  existingUser = response.body.user;
+  existingUserAccessToken = response.body.accessToken;
+  existingUserRefreshJwtCookie = response.header["set-cookie"][0];
+  existingUserLogoutJwtCookie = response.header["set-cookie"][1];
 });
 
 afterAll(async () => {
-  mongoose.disconnect();
+  await mongoose.disconnect();
 });
 
 //#endregion
@@ -61,16 +58,19 @@ afterAll(async () => {
 
 test("Should sign up new user with valid properties.", async () => {
   // Sign up new user request
-  const response = await request(app).post("/users").send(newUser).expect(201);
+  const response = await request(app)
+    .post("/users")
+    .send(newUserCreationObject)
+    .expect(201);
   // Assert that database was updated successfully
   const user = await User.findById(response.body.user._id);
   expect(user).not.toBeNull();
   // Assert that returned user fields are correct
   expect(response.body).toMatchObject({
     user: {
-      name: newUser.name,
-      username: newUser.username,
-      email: newUser.email,
+      name: newUserCreationObject.name,
+      username: newUserCreationObject.username,
+      email: newUserCreationObject.email,
     },
   });
   // Assert that valid access token is returned
@@ -86,7 +86,7 @@ test("Should not sign up new user with invalid properties.", async () => {
   await request(app)
     .post("/users")
     .send({
-      ...newUser,
+      ...newUserCreationObject,
       email: "invalidEmail",
     })
     .expect(400);
@@ -97,7 +97,7 @@ test("Should not sign up new user with additional properties.", async () => {
   await request(app)
     .post("/users")
     .send({
-      ...newUser,
+      ...newUserCreationObject,
       invalidField: true,
     })
     .expect(400);
@@ -111,8 +111,8 @@ test("Should sign in existing user.", async () => {
   await request(app)
     .post("/users/login")
     .send({
-      email: existingUser.email,
-      password: existingUser.password,
+      email: existingUserCreationObject.email,
+      password: existingUserCreationObject.password,
     })
     .expect(200);
 });
@@ -121,8 +121,8 @@ test("Should not sign in nonexisting user.", async () => {
   await request(app)
     .post("/users/login")
     .send({
-      email: newUser.email,
-      password: newUser.password,
+      email: newUserCreationObject.email,
+      password: newUserCreationObject.password,
     })
     .expect(400);
 });
@@ -140,12 +140,92 @@ test("Should not sign in given wrong password.", async () => {
 //#endregion
 
 //#region /users/logout route =================================================
+
+test("Should log authenticated user out.", async () => {
+  await request(app)
+    .post("/users/logout")
+    .set("Authorization", `Bearer ${existingUserAccessToken}`)
+    .set("Cookie", existingUserLogoutJwtCookie)
+    .expect(200);
+  // Asset that user has no refresh tokens
+  const user = await User.findById(existingUser._id);
+  expect(user.refreshTokens.length).toEqual(0);
+});
+
+test("Should not log unauthenticated user out.", async () => {
+  await request(app)
+    .post("/users/logout")
+    .set("Cookie", existingUserLogoutJwtCookie)
+    .expect(401);
+});
+
+test("Should not log user out with invalid cookie.", async () => {
+  await request(app)
+    .post("/users/logout")
+    .set("Authorization", `Bearer ${existingUserAccessToken}`)
+    .set("Cookie", "logout_jwt=invalid-cookie")
+    .expect(500);
+});
+
 //#endregion
 
 //#region /users/logAll route =================================================
+
+test("Should log authenticated user out of all sessions.", async () => {
+  // Sign in user second time (2 refresh tokens)
+  await request(app)
+    .post("/users/login")
+    .send({
+      email: existingUserCreationObject.email,
+      password: existingUserCreationObject.password,
+    })
+    .expect(200);
+  // Assert that user has 2 refresh tokens
+  let user = await User.findById(existingUser._id);
+  expect(user.refreshTokens.length).toEqual(2);
+  // Sign user out of all sessions
+  await request(app)
+    .post("/users/logoutAll")
+    .set("Authorization", `Bearer ${existingUserAccessToken}`)
+    .set("Cookie", existingUserRefreshJwtCookie)
+    .expect(200);
+  // Asset that user has no refresh tokens
+  user = await User.findById(existingUser._id);
+  expect(user.refreshTokens.length).toEqual(0);
+});
+
 //#endregion
 
 //#region /users/refresh route ================================================
+
+test("Should refresh tokens of authenticated user", async () => {
+  const response = await request(app)
+    .post("/users/refresh")
+    .set("Cookie", existingUserRefreshJwtCookie)
+    .expect(200);
+  // Assert that valid access and refresh tokens returned in response
+  const accessToken = response.body.accessToken;
+  const refreshJwt = response.header["set-cookie"][0]
+    .split(";")[0]
+    .replace("refresh_jwt=", "");
+  const logoutJwt = response.header["set-cookie"][1]
+    .split(";")[0]
+    .replace("logout_jwt=", "");
+  jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+  jwt.verify(refreshJwt, process.env.REFRESH_TOKEN_SECRET);
+  jwt.verify(logoutJwt, process.env.REFRESH_TOKEN_SECRET);
+  // Assert that user still only has one refresh token after renewal
+  let user = await User.findById(existingUser._id);
+  expect(user.refreshTokens.length).toEqual(1);
+});
+
+test("Should not refresh tokens of unauthenticated user", async () => {
+  await request(app)
+    .post("/users/refresh")
+    .set("Cookie", "logout_jwt=invalid-cookie")
+    .expect(401);
+});
+
 //#endregion
 
 //#region /users/me route =====================================================
@@ -177,7 +257,7 @@ test("Should delete account for authenticated user.", async () => {
     .send()
     .expect(200);
   // Assert that account was deleted
-  const user = await User.findById(existingUserId);
+  const user = await User.findById(existingUser._id);
   expect(user).toBeNull();
 });
 
@@ -199,8 +279,28 @@ test("Should update name of authenticated user.", async () => {
     .set("Authorization", `Bearer ${existingUserAccessToken}`)
     .expect(200);
   // Assert that name was correctly updated
-  const user = await User.findById(existingUserId);
+  const user = await User.findById(existingUser._id);
   expect(user.name).toEqual(newName);
+});
+
+test("Should not update name of unauthenticated user.", async () => {
+  const newName = "Seymour Skinner";
+  await request(app)
+    .patch("/users/me")
+    .send({
+      name: newName,
+    })
+    .expect(401);
+});
+
+test("Should not update invalid field for authenticated user.", async () => {
+  await request(app)
+    .patch("/users/me")
+    .send({
+      invalidField: "Crazy Legs",
+    })
+    .set("Authorization", `Bearer ${existingUserAccessToken}`)
+    .expect(400);
 });
 
 //#endregion
@@ -214,7 +314,7 @@ test("Should upload avatar image.", async () => {
     .attach("avatar", "tests/fixtures/profile-pic.jpg")
     .expect(200);
   // Assert that binary data has been uploaded
-  const user = await User.findById(existingUserId);
+  const user = await User.findById(existingUser._id);
   expect(user.avatar).toEqual(expect.any(Buffer));
 });
 
@@ -222,14 +322,20 @@ test("Should upload avatar image.", async () => {
 
 //#region /users/:id/avatar route ==============================================
 
-test("Should not update invalid user field for authenticated user.", async () => {
+test("Should return image reponse.", async () => {
+  // Upload avatar image for user
   await request(app)
-    .patch("/users/me")
-    .send({
-      invalidField: "Crazy Legs",
-    })
+    .post("/users/me/avatar")
     .set("Authorization", `Bearer ${existingUserAccessToken}`)
-    .expect(400);
+    .attach("avatar", "tests/fixtures/profile-pic.jpg")
+    .expect(200);
+  // Get avatar image
+  const response = await request(app)
+    .get(`/users/${existingUser._id}/avatar`)
+    .set("Authorization", `Bearer ${existingUserAccessToken}`)
+    .expect(200);
+  // Assert that png image is shown
+  expect(response.header["content-type"]).toContain("image/png");
 });
 
 //#endregion

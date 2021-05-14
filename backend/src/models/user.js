@@ -75,27 +75,6 @@ const userSchema = new mongoose.Schema(
 //#region Instance methods ====================================================
 
 /**
- * Writes/appends refresh token cookies to the response.
- * @param {*} res Response to be sent to the user.
- * @param {String} refreshToken Refresh token to be written.
- */
-const writeRefreshCookies = (res, refreshToken) => {
-  // Append refresh token to response in cookies
-  res.cookie("refresh_jwt", refreshToken, {
-    httpOnly: true,
-    // secure: process.env.PRODUCTION,
-    path: "/users/refresh",
-    //domain: 'example.com', //set your domain
-  });
-  res.cookie("logout_jwt", refreshToken, {
-    httpOnly: true,
-    // secure: process.env.PRODUCTION,
-    path: "/users/logout",
-    //domain: 'example.com', //set your domain
-  });
-};
-
-/**
  * Generates a new refresh jwt token and appends it to the response.
  * @param {*} res Response to be sent to the user.
  */
@@ -111,7 +90,7 @@ userSchema.methods.generateRefreshToken = async function (res) {
   user.refreshTokens = user.refreshTokens.concat({ refreshToken });
   await user.save();
   // Append refresh token to response as cookies
-  writeRefreshCookies(res, refreshToken);
+  User.writeRefreshCookies(res, refreshToken);
 };
 
 /**
@@ -129,8 +108,6 @@ userSchema.methods.deleteRefreshToken = async function (
     return refreshToken.refreshToken !== currentRefreshToken;
   });
   await user.save();
-  // Overwrite cookie refresh tokens with blank string
-  writeRefreshCookies(res, "");
 };
 
 /**
@@ -160,8 +137,6 @@ userSchema.methods.deleteAllRefreshTokens = async function (req, res) {
   // Delete all refresh tokens for user in database
   req.user.refreshTokens = [];
   await req.user.save();
-  // Overwrite cookie refresh tokens with blank string
-  writeRefreshCookies(res, "");
 };
 
 /**
@@ -226,6 +201,29 @@ userSchema.statics.findByCredentials = async (email, password) => {
     throw new Error("Unable to login.");
   }
   return user;
+};
+
+/**
+ * Writes/appends refresh token cookies to the response.
+ * @param {*} res Response to be sent to the user.
+ * @param {String} refreshToken Refresh token to be written.
+ */
+userSchema.statics.writeRefreshCookies = (res, refreshToken) => {
+  // Append refresh token to response in cookies
+  res.cookie("refresh_jwt", refreshToken, {
+    httpOnly: true,
+    // secure: process.env.PRODUCTION,
+    path: "/users/refresh",
+    //domain: 'example.com', //set your domain
+    overwrite: true,
+  });
+  res.cookie("logout_jwt", refreshToken, {
+    httpOnly: true,
+    // secure: process.env.PRODUCTION,
+    path: "/users/logout",
+    //domain: 'example.com', //set your domain
+    overwrite: true,
+  });
 };
 
 //#endregion
