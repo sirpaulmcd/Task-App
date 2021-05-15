@@ -8,9 +8,9 @@ const {
   initializeDatabase,
   disconnectFromDatabase,
   newUserCreationObject,
-  existingUserOne,
-  existingUserOneAccessToken,
-  existingUserOneRefreshToken,
+  userOne,
+  userOneAccessToken,
+  userOneRefreshToken,
 } = require("./fixtures/db");
 
 //#region Setup and Teardown ==================================================
@@ -86,8 +86,8 @@ test("Should sign in existing user.", async () => {
   await request(app)
     .post("/users/login")
     .send({
-      email: existingUserOne.email,
-      password: existingUserOne.password,
+      email: userOne.email,
+      password: userOne.password,
     })
     .expect(200);
 });
@@ -106,8 +106,8 @@ test("Should not sign in given wrong password.", async () => {
   await request(app)
     .post("/users/login")
     .send({
-      email: existingUserOne.email,
-      password: existingUserOne.password + "a",
+      email: userOne.email,
+      password: userOne.password + "a",
     })
     .expect(400);
 });
@@ -119,25 +119,25 @@ test("Should not sign in given wrong password.", async () => {
 test("Should log authenticated user out.", async () => {
   await request(app)
     .post("/users/logout")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
-    .set("Cookie", `logout_jwt=${existingUserOneRefreshToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
+    .set("Cookie", `logout_jwt=${userOneRefreshToken}`)
     .expect(200);
   // Asset that user has no refresh tokens
-  const user = await User.findById(existingUserOne._id);
+  const user = await User.findById(userOne._id);
   expect(user.refreshTokens.length).toEqual(0);
 });
 
 test("Should not log unauthenticated user out.", async () => {
   await request(app)
     .post("/users/logout")
-    .set("Cookie", `logout_jwt=${existingUserOneRefreshToken}`)
+    .set("Cookie", `logout_jwt=${userOneRefreshToken}`)
     .expect(401);
 });
 
 test("Should not log user out with invalid cookie.", async () => {
   await request(app)
     .post("/users/logout")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
     .set("Cookie", "logout_jwt=invalid-cookie")
     .expect(500);
 });
@@ -151,21 +151,21 @@ test("Should log authenticated user out of all sessions.", async () => {
   await request(app)
     .post("/users/login")
     .send({
-      email: existingUserOne.email,
-      password: existingUserOne.password,
+      email: userOne.email,
+      password: userOne.password,
     })
     .expect(200);
   // Assert that user has 2 refresh tokens
-  let user = await User.findById(existingUserOne._id);
+  let user = await User.findById(userOne._id);
   expect(user.refreshTokens.length).toEqual(2);
   // Sign user out of all sessions
   await request(app)
     .post("/users/logoutAll")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
-    .set("Cookie", `refresh_jwt=${existingUserOneRefreshToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
+    .set("Cookie", `refresh_jwt=${userOneRefreshToken}`)
     .expect(200);
   // Asset that user has no refresh tokens
-  user = await User.findById(existingUserOne._id);
+  user = await User.findById(userOne._id);
   expect(user.refreshTokens.length).toEqual(0);
 });
 
@@ -176,7 +176,7 @@ test("Should log authenticated user out of all sessions.", async () => {
 test("Should refresh tokens of authenticated user", async () => {
   const response = await request(app)
     .post("/users/refresh")
-    .set("Cookie", `refresh_jwt=${existingUserOneRefreshToken}`)
+    .set("Cookie", `refresh_jwt=${userOneRefreshToken}`)
     .expect(200);
   // Assert that valid access and refresh tokens returned in response
   const accessToken = response.body.accessToken;
@@ -190,7 +190,7 @@ test("Should refresh tokens of authenticated user", async () => {
   jwt.verify(refreshJwt, process.env.REFRESH_TOKEN_SECRET);
   jwt.verify(logoutJwt, process.env.REFRESH_TOKEN_SECRET);
   // Assert that user still only has one refresh token after renewal
-  let user = await User.findById(existingUserOne._id);
+  let user = await User.findById(userOne._id);
   expect(user.refreshTokens.length).toEqual(1);
 });
 
@@ -208,7 +208,7 @@ test("Should not refresh tokens of unauthenticated user", async () => {
 test("Should get profile for authenticated user.", async () => {
   const response = await request(app)
     .get("/users/me")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send()
     .expect(200);
   // Assert that private info not returned with user response
@@ -220,7 +220,7 @@ test("Should get profile for authenticated user.", async () => {
 test("Should not get profile for unauthenticated user.", async () => {
   await request(app)
     .get("/users/me")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}ExtraCharacters`)
+    .set("Authorization", `Bearer ${userOneAccessToken}ExtraCharacters`)
     .send()
     .expect(401);
 });
@@ -228,18 +228,18 @@ test("Should not get profile for unauthenticated user.", async () => {
 test("Should delete account for authenticated user.", async () => {
   await request(app)
     .delete("/users/me")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send()
     .expect(200);
   // Assert that account was deleted
-  const user = await User.findById(existingUserOne._id);
+  const user = await User.findById(userOne._id);
   expect(user).toBeNull();
 });
 
 test("Should not delete account for unauthenticated user.", async () => {
   await request(app)
     .delete("/users/me")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}ExtraCharacters`)
+    .set("Authorization", `Bearer ${userOneAccessToken}ExtraCharacters`)
     .send()
     .expect(401);
 });
@@ -251,10 +251,10 @@ test("Should update name of authenticated user.", async () => {
     .send({
       name: newName,
     })
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
     .expect(200);
   // Assert that name was correctly updated
-  const user = await User.findById(existingUserOne._id);
+  const user = await User.findById(userOne._id);
   expect(user.name).toEqual(newName);
 });
 
@@ -274,7 +274,7 @@ test("Should not update invalid field for authenticated user.", async () => {
     .send({
       invalidField: "Crazy Legs",
     })
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
     .expect(400);
 });
 
@@ -285,11 +285,11 @@ test("Should not update invalid field for authenticated user.", async () => {
 test("Should upload avatar image.", async () => {
   await request(app)
     .post("/users/me/avatar")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
     .attach("avatar", "tests/fixtures/profile-pic.jpg")
     .expect(200);
   // Assert that binary data has been uploaded
-  const user = await User.findById(existingUserOne._id);
+  const user = await User.findById(userOne._id);
   expect(user.avatar).toEqual(expect.any(Buffer));
 });
 
@@ -308,13 +308,13 @@ test("Should return image reponse.", async () => {
   // Upload avatar image for user
   await request(app)
     .post("/users/me/avatar")
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
     .attach("avatar", "tests/fixtures/profile-pic.jpg")
     .expect(200);
   // Get avatar image
   const response = await request(app)
-    .get(`/users/${existingUserOne._id}/avatar`)
-    .set("Authorization", `Bearer ${existingUserOneAccessToken}`)
+    .get(`/users/${userOne._id}/avatar`)
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
     .expect(200);
   // Assert that png image is shown
   expect(response.header["content-type"]).toContain("image/png");

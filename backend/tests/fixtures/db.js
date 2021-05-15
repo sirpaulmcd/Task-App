@@ -5,48 +5,48 @@ const connectToDatabase = require("../../src/db/mongoose");
 const Task = require("../../src/models/task");
 const User = require("../../src/models/user");
 
-//#region Test objects ========================================================
+//#region User objects ========================================================
 
-const existingUserOneId = new mongoose.Types.ObjectId();
-const existingUserOneAccessToken = jwt.sign(
-  { _id: existingUserOneId },
+const userOneId = new mongoose.Types.ObjectId();
+const userOneAccessToken = jwt.sign(
+  { _id: userOneId },
   process.env.ACCESS_TOKEN_SECRET
 );
-const existingUserOneRefreshToken = jwt.sign(
-  { _id: existingUserOneId },
+const userOneRefreshToken = jwt.sign(
+  { _id: userOneId },
   process.env.REFRESH_TOKEN_SECRET
 );
-const existingUserOne = {
-  _id: existingUserOneId,
+const userOne = {
+  _id: userOneId,
   name: "Michael Stevens",
   username: "Vsauce",
   email: "thisismyemail@orisit.com",
   password: "test1234",
   refreshTokens: [
     {
-      refreshToken: existingUserOneRefreshToken,
+      refreshToken: userOneRefreshToken,
     },
   ],
 };
 
-const existingUserTwoId = new mongoose.Types.ObjectId();
-const existingUserTwoAccessToken = jwt.sign(
-  { _id: existingUserTwoId },
+const userTwoId = new mongoose.Types.ObjectId();
+const userTwoAccessToken = jwt.sign(
+  { _id: userTwoId },
   process.env.ACCESS_TOKEN_SECRET
 );
-const existingUserTwoRefreshToken = jwt.sign(
-  { _id: existingUserTwoId },
+const userTwoRefreshToken = jwt.sign(
+  { _id: userTwoId },
   process.env.REFRESH_TOKEN_SECRET
 );
-const existingUserTwo = {
-  _id: existingUserTwoId,
+const userTwo = {
+  _id: userTwoId,
   name: "William Butcher",
   username: "BillyBoy",
   email: "downwithsupes@cia.com",
   password: "test1234",
   refreshTokens: [
     {
-      refreshToken: existingUserTwoRefreshToken,
+      refreshToken: userTwoRefreshToken,
     },
   ],
 };
@@ -60,6 +60,31 @@ const newUserCreationObject = {
 
 //#endregion
 
+//#region Task objects ========================================================
+
+const taskOne = {
+  _id: new mongoose.Types.ObjectId(),
+  description: "First task.",
+  completed: false,
+  owner: userOne._id,
+};
+
+const taskTwo = {
+  _id: new mongoose.Types.ObjectId(),
+  description: "Second task.",
+  completed: true,
+  owner: userOne._id,
+};
+
+const taskThree = {
+  _id: new mongoose.Types.ObjectId(),
+  description: "Third task.",
+  completed: false,
+  owner: userTwo._id,
+};
+
+//#endregion
+
 //#region Setup and Teardown ==================================================
 
 /**
@@ -68,11 +93,15 @@ const newUserCreationObject = {
  */
 const initializeDatabase = async () => {
   // Clear database
-  await User.deleteMany({}).exec();
-  await Task.deleteMany({}).exec();
+  await User.deleteMany().exec();
+  await Task.deleteMany().exec();
   // Add test users
-  await new User(existingUserOne).save();
-  await new User(existingUserTwo).save();
+  await new User(userOne).save();
+  await new User(userTwo).save();
+  // Add test tasks
+  await new Task(taskOne).save();
+  await new Task(taskTwo).save();
+  await new Task(taskThree).save();
 };
 
 const disconnectFromDatabase = async () => {
@@ -86,10 +115,13 @@ module.exports = {
   initializeDatabase,
   disconnectFromDatabase,
   newUserCreationObject,
-  existingUserOne,
-  existingUserOneAccessToken,
-  existingUserOneRefreshToken,
-  existingUserTwo,
-  existingUserTwoAccessToken,
-  existingUserTwoRefreshToken,
+  userOne,
+  userOneAccessToken,
+  userOneRefreshToken,
+  userTwo,
+  userTwoAccessToken,
+  userTwoRefreshToken,
+  taskOne,
+  taskTwo,
+  taskThree,
 };
