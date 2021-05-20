@@ -4,17 +4,22 @@ const mongoose = require("mongoose");
 const connectToDatabase = require("../../src/db/mongoose");
 const Task = require("../../src/models/task");
 const User = require("../../src/models/user");
+const { generateJWT } = require("../../src/utils/tokens");
 
 //#region User objects ========================================================
 
 const userOneId = new mongoose.Types.ObjectId();
-const userOneAccessToken = jwt.sign(
+const userOneAccessToken = generateJWT(
   { _id: userOneId },
   process.env.ACCESS_TOKEN_SECRET
 );
-const userOneRefreshToken = jwt.sign(
+const userOneRefreshToken = generateJWT(
   { _id: userOneId },
   process.env.REFRESH_TOKEN_SECRET
+);
+const userOneEmailToken = generateJWT(
+  { _id: userOneId },
+  process.env.EMAIL_TOKEN_SECRET
 );
 const userOne = {
   _id: userOneId,
@@ -30,11 +35,11 @@ const userOne = {
 };
 
 const userTwoId = new mongoose.Types.ObjectId();
-const userTwoAccessToken = jwt.sign(
+const userTwoAccessToken = generateJWT(
   { _id: userTwoId },
   process.env.ACCESS_TOKEN_SECRET
 );
-const userTwoRefreshToken = jwt.sign(
+const userTwoRefreshToken = generateJWT(
   { _id: userTwoId },
   process.env.REFRESH_TOKEN_SECRET
 );
@@ -118,6 +123,7 @@ module.exports = {
   userOne,
   userOneAccessToken,
   userOneRefreshToken,
+  userOneEmailToken,
   userTwo,
   userTwoAccessToken,
   userTwoRefreshToken,

@@ -5,6 +5,10 @@ const uniqueValidator = require("mongoose-unique-validator");
 const jwt = require("jsonwebtoken");
 
 const Task = require("./task");
+const {
+  generateJWT,
+  appendTokenToResponseAsCookie,
+} = require("../utils/tokens");
 
 //#region Schema ==============================================================
 
@@ -53,6 +57,10 @@ const userSchema = new mongoose.Schema(
       maxlength: 64,
       trim: true,
     },
+    verifiedEmail: {
+      type: Boolean,
+      default: false,
+    },
     avatar: {
       type: Buffer,
     },
@@ -75,22 +83,50 @@ const userSchema = new mongoose.Schema(
 //#region Instance methods ====================================================
 
 /**
+ * Generates a new access token.
+ * @returns Access token string.
+ */
+userSchema.methods.generateAccessToken = function () {
+  // Generate access token
+  const user = this;
+  const accessToken = generateJWT(
+    { _id: user._id },
+    process.env.ACCESS_TOKEN_SECRET,
+    "15 minutes"
+  );
+  return accessToken;
+};
+
+/**
  * Generates a new refresh jwt token and appends it to the response.
  * @param {*} res Response to be sent to the user.
  */
 userSchema.methods.generateRefreshToken = async function (res) {
   // Generate refresh token
   const user = this;
-  const refreshToken = jwt.sign(
-    { _id: user._id.toString() },
+  const refreshToken = generateJWT(
+    { _id: user._id },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7 days" }
+    "7 days"
   );
   // Save refresh token in database
   user.refreshTokens = user.refreshTokens.concat({ refreshToken });
   await user.save();
   // Append refresh token to response as cookies
   User.writeRefreshCookies(res, refreshToken);
+};
+
+/**
+ * Generates new access and refresh tokens for the user. Returns access token
+ * and appends refresh tokens as cookies on response.
+ * @param {*} res Response sent to the user.
+ * @returns Access token string.
+ */
+userSchema.methods.generateTokens = async function (res) {
+  // Generate access and refresh tokens
+  const user = this;
+  await user.generateRefreshToken(res);
+  return user.generateAccessToken();
 };
 
 /**
@@ -102,7 +138,6 @@ userSchema.methods.deleteRefreshToken = async function (
   currentRefreshToken,
   res
 ) {
-  // Remove current refresh token from database
   const user = this;
   user.refreshTokens = user.refreshTokens.filter((refreshToken) => {
     return refreshToken.refreshToken !== currentRefreshToken;
@@ -133,38 +168,10 @@ userSchema.methods.deleteInvalidRefreshTokens = async function () {
  * @param {*} req Request sent by the user.
  * @param {*} res Response sent to the user.
  */
-userSchema.methods.deleteAllRefreshTokens = async function (req, res) {
+userSchema.methods.deleteAllRefreshTokens = async function (req) {
   // Delete all refresh tokens for user in database
   req.user.refreshTokens = [];
   await req.user.save();
-};
-
-/**
- * Generates a new access token.
- * @returns Access token string.
- */
-userSchema.methods.generateAccessToken = function () {
-  // Generate access token
-  const user = this;
-  const accessToken = jwt.sign(
-    { _id: user._id.toString() },
-    process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15 minutes" }
-  );
-  return accessToken;
-};
-
-/**
- * Generates new access and refresh tokens for the user. Returns access token
- * and appends refresh tokens as cookies on response.
- * @param {*} res Response sent to the user.
- * @returns Access token string.
- */
-userSchema.methods.generateTokens = async function (res) {
-  // Generate access and refresh tokens
-  const user = this;
-  await user.generateRefreshToken(res);
-  return user.generateAccessToken();
 };
 
 /**
@@ -209,21 +216,18 @@ userSchema.statics.findByCredentials = async (email, password) => {
  * @param {String} refreshToken Refresh token to be written.
  */
 userSchema.statics.writeRefreshCookies = (res, refreshToken) => {
-  // Append refresh token to response in cookies
-  res.cookie("refresh_jwt", refreshToken, {
-    httpOnly: true,
-    // secure: process.env.PRODUCTION,
-    path: "/users/refresh",
-    //domain: 'example.com', //set your domain
-    overwrite: true,
-  });
-  res.cookie("logout_jwt", refreshToken, {
-    httpOnly: true,
-    // secure: process.env.PRODUCTION,
-    path: "/users/logout",
-    //domain: 'example.com', //set your domain
-    overwrite: true,
-  });
+  appendTokenToResponseAsCookie(
+    res,
+    "refresh_jwt",
+    refreshToken,
+    "/users/refresh"
+  );
+  appendTokenToResponseAsCookie(
+    res,
+    "logout_jwt",
+    refreshToken,
+    "/users/logout"
+  );
 };
 
 //#endregion

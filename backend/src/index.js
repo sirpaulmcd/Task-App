@@ -1,18 +1,17 @@
 const app = require("./app");
 const connectToDatabase = require("../src/db/mongoose");
 
-const backendPort = process.env.BACKEND_PORT || 8000;
-
 //#region Connections =========================================================
 
 const connectToServer = () => {
-  app.listen(backendPort, () => {
-    console.log("Server connected on port: ", backendPort);
+  app.listen(process.env.BACKEND_PORT, () => {
+    console.log("Server connected on port: ", process.env.BACKEND_PORT);
   });
 };
 
 const makeConnections = async () => {
   await connectToDatabase();
+  console.log("Database connected on port:", process.env.DB_PORT);
   connectToServer();
 };
 

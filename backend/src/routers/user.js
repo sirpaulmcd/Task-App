@@ -40,7 +40,7 @@ router.post("/users", async (req, res) => {
     if (!requestPropertiesAreValid) {
       return res
         .status(400)
-        .send({ error: "Attempted to update invalid property." });
+        .send({ error: "Attempted to create user with invalid property." });
     }
     // Create new user and save in db
     const user = new User(req.body);
@@ -95,6 +95,31 @@ router.post("/users/refresh", async (req, res) => {
     res.send({ user, accessToken });
   } catch (error) {
     res.status(401).send({ error: "Not authenticated." });
+  }
+});
+
+/**
+ * Verify email
+ */
+router.get("/users/verification/:token", async (req, res) => {
+  try {
+    // Verify token
+    const payload = jwt.verify(
+      req.params.token,
+      process.env.EMAIL_TOKEN_SECRET
+    );
+    // Get user associated with token
+    const user = await User.findById(payload._id);
+    if (!user) {
+      throw new Error();
+    }
+    // Indicate email has been verified
+    user.verifiedEmail = true;
+    await user.save();
+    // TODO: Redirect to desired frontend page
+    res.redirect("http://localhost:3000");
+  } catch (error) {
+    res.status(401).send();
   }
 });
 

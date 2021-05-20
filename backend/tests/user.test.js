@@ -11,6 +11,7 @@ const {
   userOne,
   userOneAccessToken,
   userOneRefreshToken,
+  userOneEmailToken,
 } = require("./fixtures/db");
 
 //#region Setup and Teardown ==================================================
@@ -318,6 +319,30 @@ test("Should return image reponse.", async () => {
     .expect(200);
   // Assert that png image is shown
   expect(response.header["content-type"]).toContain("image/png");
+});
+
+//#endregion
+
+//#region /users/verification/:token route ====================================
+
+test("Should verify email of user with valid token.", async () => {
+  // Access endpoint with valid token
+  await request(app)
+    .get(`/users/verification/${userOneEmailToken}`)
+    .expect(302);
+  // Check to see that user's email was validated
+  const user = await User.findById(userOne._id);
+  expect(user.verifiedEmail).toEqual(true);
+});
+
+test("Should not verify email of user with invalid token.", async () => {
+  // Access endpoint with valid token
+  await request(app)
+    .get(`/users/verification/${userOneAccessToken}`)
+    .expect(401);
+  // Check to see that user's email was not validated
+  const user = await User.findById(userOne._id);
+  expect(user.verifiedEmail).toEqual(false);
 });
 
 //#endregion
