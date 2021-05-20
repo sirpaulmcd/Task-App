@@ -134,10 +134,7 @@ userSchema.methods.generateTokens = async function (res) {
  * @param {*} currentRefreshToken Current, but aged, refresh token.
  * @param {*} res Response to be sent to the user.
  */
-userSchema.methods.deleteRefreshToken = async function (
-  currentRefreshToken,
-  res
-) {
+userSchema.methods.deleteRefreshToken = async function (currentRefreshToken) {
   const user = this;
   user.refreshTokens = user.refreshTokens.filter((refreshToken) => {
     return refreshToken.refreshToken !== currentRefreshToken;

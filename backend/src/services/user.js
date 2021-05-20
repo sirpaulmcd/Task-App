@@ -67,7 +67,7 @@ class UserService {
       await user.deleteInvalidRefreshTokens();
       // Delete current refresh token
       req.user = user;
-      await user.deleteRefreshToken(refreshToken, res);
+      await user.deleteRefreshToken(refreshToken);
       // Generate and return new access and refresh tokens (extend expiration period)
       const accessToken = await user.generateTokens(res);
       res.send({ user, accessToken });
@@ -216,7 +216,7 @@ class UserService {
         throw new Error();
       }
       jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-      await req.user.deleteRefreshToken(refreshToken, res);
+      await req.user.deleteRefreshToken(refreshToken);
       await User.writeRefreshCookies(res, "");
 
       res.send({ accessToken: "" });
