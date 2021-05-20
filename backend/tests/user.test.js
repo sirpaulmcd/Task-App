@@ -11,7 +11,8 @@ const {
   userOne,
   userOneAccessToken,
   userOneRefreshToken,
-  userOneEmailToken,
+  userOneVerifyEmailToken,
+  userOneForgotPasswordToken,
 } = require("./fixtures/db");
 
 //#region Setup and Teardown ==================================================
@@ -204,6 +205,56 @@ test("Should not refresh tokens of unauthenticated user", async () => {
 
 //#endregion
 
+//#region /users/password route ===============================================
+
+test("Should send password reset email if input email is valid.", async () => {
+  await request(app)
+    .post("/users/password/forgot")
+    .send({
+      email: userOne.email,
+    })
+    .expect(200);
+});
+
+test("Should not send password reset email if input email is invalid.", async () => {
+  await request(app)
+    .post("/users/password/forgot")
+    .send({
+      email: userOne.email + "a",
+    })
+    .expect(400);
+});
+
+test("Should reset password for user with valid password reset token.", async () => {
+  const newPassword = "newPassword!";
+  // Request password resert
+  await request(app)
+    .post("/users/password/reset")
+    .send({
+      forgotPasswordToken: userOneForgotPasswordToken,
+      newPassword: newPassword,
+    })
+    .expect(200);
+  // Assert password change
+  const user = await User.findById(userOne._id);
+  const passwordIsValid = await user.verifyPassword(newPassword);
+  expect(passwordIsValid).toEqual(true);
+});
+
+test("Should not reset password for user with invalid password reset token.", async () => {
+  const newPassword = "newPassword!";
+  // Request password resert
+  await request(app)
+    .post("/users/password/reset")
+    .send({
+      forgotPasswordToken: userOneForgotPasswordToken + "a",
+      newPassword: newPassword,
+    })
+    .expect(400);
+});
+
+//#endregion
+
 //#region /users/me route =====================================================
 
 test("Should get profile for authenticated user.", async () => {
@@ -375,7 +426,7 @@ test("Should return image reponse.", async () => {
 test("Should verify email of user with valid token.", async () => {
   // Access endpoint with valid token
   await request(app)
-    .get(`/users/verification/${userOneEmailToken}`)
+    .get(`/users/verification/${userOneVerifyEmailToken}`)
     .expect(302);
   // Check to see that user's email was validated
   const user = await User.findById(userOne._id);

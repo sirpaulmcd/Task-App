@@ -5,6 +5,7 @@ const sharp = require("sharp");
 
 const auth = require("../middleware/auth");
 const User = require("../models/user");
+const { sendForgotPasswordEmail } = require("../emails/account");
 
 const router = new express.Router();
 
@@ -106,7 +107,7 @@ router.get("/users/verification/:token", async (req, res) => {
     // Verify token
     const payload = jwt.verify(
       req.params.token,
-      process.env.EMAIL_TOKEN_SECRET
+      process.env.VERIFY_EMAIL_TOKEN_SECRET
     );
     // Get user associated with token
     const user = await User.findById(payload._id);
@@ -120,6 +121,48 @@ router.get("/users/verification/:token", async (req, res) => {
     res.redirect("http://localhost:3000");
   } catch (error) {
     res.status(401).send();
+  }
+});
+
+/**
+ * Request password reset email
+ */
+router.post("/users/password/forgot", async (req, res) => {
+  try {
+    // Check if user with email exists
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      throw new Error();
+    }
+    // Send password reset email
+    sendForgotPasswordEmail(user);
+    res.send();
+  } catch (error) {
+    res.status(400).send();
+  }
+});
+
+/**
+ * Reset password
+ */
+router.post("/users/password/reset", async (req, res) => {
+  try {
+    // Verify token
+    const payload = jwt.verify(
+      req.body.forgotPasswordToken,
+      process.env.FORGOT_PASSWORD_TOKEN_SECRET
+    );
+    // Get user associated with token
+    const user = await User.findById(payload._id);
+    if (!user) {
+      throw new Error();
+    }
+    // Update password
+    user.password = req.body.newPassword;
+    await user.save();
+    res.send();
+  } catch (error) {
+    res.status(400).send();
   }
 });
 

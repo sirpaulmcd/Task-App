@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 const connectToDatabase = require("../../src/db/mongoose");
@@ -17,9 +16,13 @@ const userOneRefreshToken = generateJWT(
   { _id: userOneId },
   process.env.REFRESH_TOKEN_SECRET
 );
-const userOneEmailToken = generateJWT(
+const userOneVerifyEmailToken = generateJWT(
   { _id: userOneId },
-  process.env.EMAIL_TOKEN_SECRET
+  process.env.VERIFY_EMAIL_TOKEN_SECRET
+);
+const userOneForgotPasswordToken = generateJWT(
+  { _id: userOneId },
+  process.env.FORGOT_PASSWORD_TOKEN_SECRET
 );
 const userOne = {
   _id: userOneId,
@@ -123,7 +126,8 @@ module.exports = {
   userOne,
   userOneAccessToken,
   userOneRefreshToken,
-  userOneEmailToken,
+  userOneVerifyEmailToken,
+  userOneForgotPasswordToken,
   userTwo,
   userTwoAccessToken,
   userTwoRefreshToken,
