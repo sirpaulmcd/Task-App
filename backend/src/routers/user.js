@@ -151,12 +151,12 @@ router.get("/users/me", auth, async (req, res) => {
 });
 
 /**
- * Update self
+ * Update public fields
  */
 router.patch("/users/me", auth, async (req, res) => {
   // Check that only valid properties are being updated
   const updatedProperties = Object.keys(req.body);
-  const validProperties = ["name", "username", "email", "password"];
+  const validProperties = ["name", "username", "email"];
   const updatedPropertiesAreValid = updatedProperties.every((property) => {
     return validProperties.includes(property);
   });
@@ -174,6 +174,25 @@ router.patch("/users/me", auth, async (req, res) => {
     res.send(req.user);
   } catch (error) {
     res.status(400).send(error);
+  }
+});
+
+/**
+ * Update password
+ */
+router.post("/users/me/password", auth, async (req, res) => {
+  try {
+    // Check if input password is valid
+    const passwordIsValid = await req.user.verifyPassword(req.body.oldPassword);
+    if (!passwordIsValid) {
+      throw new Error();
+    }
+    // Update password
+    req.user.password = req.body.newPassword;
+    await req.user.save();
+    res.send();
+  } catch (error) {
+    res.status(400).send();
   }
 });
 

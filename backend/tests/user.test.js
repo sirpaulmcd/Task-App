@@ -281,6 +281,53 @@ test("Should not update invalid field for authenticated user.", async () => {
 
 //#endregion
 
+//#region /users/me/password route ============================================
+
+test("Should update password for authenticated user when old password correct.", async () => {
+  const newPassword = "newPassword!";
+  // Upload avatar image for user
+  await request(app)
+    .post("/users/me/password")
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
+    .send({
+      oldPassword: userOne.password,
+      newPassword: newPassword,
+    })
+    .expect(200);
+  // Ensure that password updated correctly
+  const user = await User.findById(userOne._id);
+  const passwordIsValid = await user.verifyPassword(newPassword);
+  expect(passwordIsValid).toEqual(true);
+});
+
+test("Should not update password for authenticated user when old password incorrect.", async () => {
+  const newPassword = "newPassword!";
+  // Upload avatar image for user
+  await request(app)
+    .post("/users/me/password")
+    .set("Authorization", `Bearer ${userOneAccessToken}`)
+    .send({
+      oldPassword: "aasdasdas",
+      newPassword: newPassword,
+    })
+    .expect(400);
+});
+
+test("Should not update password for unauthenticated user.", async () => {
+  const newPassword = "newPassword!";
+  // Upload avatar image for user
+  await request(app)
+    .post("/users/me/password")
+    .set("Authorization", `Bearer ${userOneAccessToken}asdasd`)
+    .send({
+      oldPassword: userOne.password,
+      newPassword: newPassword,
+    })
+    .expect(401);
+});
+
+//#endregion
+
 //#region /users/me/avatar route ==============================================
 
 test("Should upload avatar image.", async () => {

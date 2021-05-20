@@ -175,6 +175,16 @@ userSchema.methods.deleteAllRefreshTokens = async function (req) {
 };
 
 /**
+ * Verifies a password against the user.
+ * @param {*} password The password to be verified.
+ * @returns True if password is valid, false otherwise.
+ */
+userSchema.methods.verifyPassword = async function (password) {
+  const user = this;
+  return await bcrypt.compare(password, user.password);
+};
+
+/**
  * Called whenever JSON.stringify() is used on this object. Used to hide
  * private fields when a user object is sent in the response.
  * @returns User object with only public fields.
@@ -203,7 +213,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   if (!user) {
     throw new Error("Unable to login.");
   }
-  const passwordIsValid = await bcrypt.compare(password, user.password);
+  const passwordIsValid = await user.verifyPassword(password);
   if (!passwordIsValid) {
     throw new Error("Unable to login.");
   }
