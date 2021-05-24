@@ -1,5 +1,7 @@
 import { Container, CssBaseline } from "@material-ui/core";
 
+import UnauthenticatedNavigation from "../Navigation/Unauthenticated/UnauthenticatedNavigation";
+
 interface LayoutProps {}
 
 export const AppLayout: React.FC<LayoutProps> = ({ children }) => {
@@ -7,6 +9,7 @@ export const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <>
       <CssBaseline />
+      <UnauthenticatedNavigation />
       <Container maxWidth="lg">
         <></>
         {children}
