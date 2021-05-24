@@ -8,7 +8,7 @@ services:
     volumes:
       - ./frontend:/home/node/frontend
       - /home/node/frontend/node_modules
-    env_file: ./frontend/.env
+    env_file: ./frontend/config/.env
   backend:
     # Path to service Dockerfile
     build: ./backend
