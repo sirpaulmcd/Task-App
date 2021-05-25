@@ -7,7 +7,7 @@ interface UnauthenticatedNavigationProps {}
 
 const UnauthenticatedNavigation: React.FC<UnauthenticatedNavigationProps> =
   () => {
-    //#region Drawer
+    //#region Drawer ----------------------------------------------------------
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const toggleDrawerHandler = () => {
@@ -15,7 +15,7 @@ const UnauthenticatedNavigation: React.FC<UnauthenticatedNavigationProps> =
     };
     //#endregion
 
-    //#region TSX
+    //#region TSX -------------------------------------------------------------
     return (
       <>
         <UnauthenticatedDrawer

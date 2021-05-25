@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       validate(value) {
         if (!validator.isAlpha(value, ["en-US"], { ignore: " " })) {
-          throw new Error("Name must only contain letters.");
+          throw new Error("Name must only contain letters and spaces.");
         }
       },
     },

@@ -7,7 +7,7 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 
 import useUnauthenticatedDrawerStyles from "./UnauthenticatedDrawerStyles";
@@ -21,11 +21,11 @@ const UnauthenticatedDrawer: React.FC<UnauthenticatedDrawerProps> = ({
   toggleDrawerHandler,
   open,
 }) => {
-  //#region Styles
+  //#region Styles ------------------------------------------------------------
   const classes = useUnauthenticatedDrawerStyles();
   //#endregion
 
-  //#region TSX
+  //#region TSX ---------------------------------------------------------------
   return ReactDOM.createPortal(
     <>
       <Drawer anchor="right" open={open} onClose={toggleDrawerHandler}>

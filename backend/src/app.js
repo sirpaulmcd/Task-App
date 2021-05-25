@@ -1,6 +1,7 @@
 const cookieParser = require("cookie-parser");
 const express = require("express");
 
+const cors = require("./middleware/cors");
 const taskRouter = require("./routers/task");
 const userRouter = require("./routers/user");
 
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors);
 
 //#endregion
 

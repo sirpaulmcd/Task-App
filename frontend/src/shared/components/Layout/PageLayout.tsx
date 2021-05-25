@@ -5,11 +5,11 @@ import usePageLayoutStyles from "./PageLayoutStyles";
 interface PageProps {}
 
 export const PageLayout: React.FC<PageProps> = ({ children }) => {
-  //#region Styles
+  //#region Styles ------------------------------------------------------------
   const classes = usePageLayoutStyles();
   //#endregion
 
-  //#region TSX
+  //#region TSX ---------------------------------------------------------------
   return (
     <>
       <Grid container>

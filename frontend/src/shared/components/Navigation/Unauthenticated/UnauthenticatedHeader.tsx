@@ -6,7 +6,7 @@ import {
   Button,
   Container,
   IconButton,
-  Toolbar
+  Toolbar,
 } from "@material-ui/core";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -20,11 +20,11 @@ interface UnauthenticatedHeaderProps {
 const UnauthenticatedHeader: React.FC<UnauthenticatedHeaderProps> = ({
   toggleDrawerHandler,
 }) => {
-  //#region Styles
+  //#region Styles ------------------------------------------------------------
   const classes = useUnauthenticatedHeaderStyles();
   //#endregion
 
-  //#region TSX
+  //#region TSX ---------------------------------------------------------------
   return (
     <>
       <AppBar position="static">

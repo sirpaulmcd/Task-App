@@ -6,12 +6,18 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./containers/app/App";
 import reportWebVitals from "./reportWebVitals";
 import { ErrorBoundary } from "./shared/components/ErrorBoundary/ErrorBoundary";
+import { AccessTokenContextProvider } from "./shared/contexts/AccessTokenContext";
+import { UserContextProvider } from "./shared/contexts/UserContext";
 
 ReactDOM.render(
   <ErrorBoundary>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AccessTokenContextProvider>
+      <UserContextProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </UserContextProvider>
+    </AccessTokenContextProvider>
   </ErrorBoundary>,
   document.getElementById("root")
 );
