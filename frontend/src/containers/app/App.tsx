@@ -2,8 +2,10 @@ import { Redirect, Route, Switch } from "react-router-dom";
 
 import { AppLayout } from "../../shared/components/Layout/AppLayout";
 import { useAccessTokenContext } from "../../shared/contexts/AccessTokenContext";
+import { useThemeContext } from "../../shared/contexts/ThemeContext";
 import HomePage from "../pages/MainPage/HomePage";
 import LandingPage from "../pages/MainPage/LandingPage";
+import { SettingsPage } from "../pages/SettingsPage/SettingsPage";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
 
@@ -12,6 +14,7 @@ interface AppProps {}
 const App: React.FC<AppProps> = () => {
   //#region Context -----------------------------------------------------------
   const auth: any = useAccessTokenContext();
+  const themeContextLoading = useThemeContext();
   //#endregion
 
   //#region Routes ------------------------------------------------------------
@@ -20,6 +23,7 @@ const App: React.FC<AppProps> = () => {
   if (auth.authenticated) {
     routes = (
       <Switch>
+        <Route path="/settings" component={SettingsPage} exact />
         <Route path="/" component={HomePage} exact />
         <Redirect to="/" />
       </Switch>
@@ -37,7 +41,7 @@ const App: React.FC<AppProps> = () => {
   //#endregion
 
   //#region TSX ---------------------------------------------------------------
-  if (auth.loading) {
+  if (auth.loading || themeContextLoading) {
     return <div>loading...</div>;
   }
   return (

@@ -14,6 +14,7 @@ const {
 
 const userSchema = new mongoose.Schema(
   {
+    //#region Public fields ---------------------------------------------------
     name: {
       type: String,
       required: true,
@@ -50,6 +51,9 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    theme: { type: String, default: "LIGHT" },
+    //#endregion
+    //#region Private fields --------------------------------------------------
     password: {
       type: String,
       required: true,
@@ -72,6 +76,7 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    //#endregion
   },
   {
     timestamps: true,
@@ -192,6 +197,7 @@ userSchema.methods.toJSON = function () {
   delete userObject.password;
   delete userObject.refreshTokens;
   delete userObject.avatar;
+  delete userObject.verifiedEmail;
   return userObject;
 };
 

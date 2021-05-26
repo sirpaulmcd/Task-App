@@ -15,6 +15,7 @@ router.get("/users/verification/:token", UserService.verifyEmail);
 router.post("/users/password/forgot", UserService.requestPasswordResetEmail);
 router.post("/users/password/reset", UserService.resetPassword);
 router.get("/users/:id/avatar", UserService.getAvatar);
+router.post("/users/unique", UserService.checkUniqueField);
 
 //#endregion
 

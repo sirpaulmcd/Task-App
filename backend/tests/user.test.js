@@ -205,6 +205,12 @@ test("Should not refresh tokens of unauthenticated user", async () => {
 
 //#endregion
 
+//#region /users/unqiue route =================================================
+
+//TODO: Test this route.
+
+//#endregion
+
 //#region /users/password route ===============================================
 
 test("Should send password reset email if input email is valid.", async () => {

@@ -7,15 +7,18 @@ import App from "./containers/app/App";
 import reportWebVitals from "./reportWebVitals";
 import { ErrorBoundary } from "./shared/components/ErrorBoundary/ErrorBoundary";
 import { AccessTokenContextProvider } from "./shared/contexts/AccessTokenContext";
+import { ThemeContextProvider } from "./shared/contexts/ThemeContext";
 import { UserContextProvider } from "./shared/contexts/UserContext";
 
 ReactDOM.render(
   <ErrorBoundary>
     <AccessTokenContextProvider>
       <UserContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <ThemeContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ThemeContextProvider>
       </UserContextProvider>
     </AccessTokenContextProvider>
   </ErrorBoundary>,

@@ -150,6 +150,30 @@ class UserService {
     }
   };
 
+  static checkUniqueField = async (req, res) => {
+    try {
+      // Check that only valid properties exist on request
+      const requestProperties = Object.keys(req.body);
+      const validProperties = ["username", "email"];
+      const requestPropertiesAreValid = requestProperties.every((property) => {
+        return validProperties.includes(property);
+      });
+      if (!requestPropertiesAreValid) {
+        return res
+          .status(400)
+          .send({ error: "Attempted to check invalid property." });
+      }
+      // Check that input properties are unique
+      const user = await User.findOne(req.body);
+      if (user) {
+        return res.status(400).send({ error: "Provided field(s) not unqiue." });
+      }
+      res.send();
+    } catch (error) {
+      res.status(500).send();
+    }
+  };
+
   //#endregion
 
   //#region Private ===========================================================
@@ -161,7 +185,7 @@ class UserService {
   static updatePublicFields = async (req, res) => {
     // Check that only valid properties are being updated
     const updatedProperties = Object.keys(req.body);
-    const validProperties = ["name", "username", "email"];
+    const validProperties = ["name", "username", "email", "theme"];
     const updatedPropertiesAreValid = updatedProperties.every((property) => {
       return validProperties.includes(property);
     });
