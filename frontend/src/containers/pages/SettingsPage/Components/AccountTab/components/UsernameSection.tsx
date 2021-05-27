@@ -25,10 +25,6 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
   const [user, setUser]: any = useUserContext();
   //#endregion
 
-  //#region Local ref ---------------------------------------------------------
-  const usernameRef = useRef<HTMLInputElement>();
-  //#endregion
-
   //#region Basic form management ---------------------------------------------
   const [usernameUpdateSuccess, setUsernameUpdateSuccess] = useState(false);
   const [formState, formDispatch, formInputHandler, formBlurHandler] = useForm(
@@ -119,6 +115,11 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
         }
       });
   }, [formDispatch, formState.inputs.username.value, user.username]);
+
+  /**
+   * Reference to username text field. Used to check if user is done typing.
+   */
+  const usernameRef = useRef<HTMLInputElement>();
 
   /**
    * When user has stopped typing for half a second, send query to check if

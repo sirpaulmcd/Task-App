@@ -23,10 +23,6 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
   const [user, setUser]: any = useUserContext();
   //#endregion
 
-  //#region Local ref ---------------------------------------------------------
-  const emailRef = useRef<HTMLInputElement>();
-  //#endregion
-
   //#region Basic form management ---------------------------------------------
   const [emailUpdateSuccess, setEmailUpdateSuccess] = useState(false);
   const [formState, formDispatch, formInputHandler, formBlurHandler] = useForm(
@@ -110,6 +106,11 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
         }
       });
   }, [formDispatch, formState.inputs.email.value, user.email]);
+
+  /**
+   * Reference to email text field. Used to check if user is done typing.
+   */
+  const emailRef = useRef<HTMLInputElement>();
 
   /**
    * When user has stopped typing for half a second, send query to check if
