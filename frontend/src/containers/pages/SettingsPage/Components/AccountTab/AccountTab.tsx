@@ -2,6 +2,7 @@ import React from "react";
 
 import { Divider, Typography } from "@material-ui/core";
 
+import { DeleteAccountSection } from "./components/DeleteAccountSection";
 import { EmailSection } from "./components/EmailSection";
 import { UsernameSection } from "./components/UsernameSection";
 
@@ -17,6 +18,7 @@ export const AccountTab: React.FC<AccountTabProps> = () => {
       <Divider />
       <UsernameSection />
       <Divider />
+      <DeleteAccountSection />
     </>
   );
   //#endregion
