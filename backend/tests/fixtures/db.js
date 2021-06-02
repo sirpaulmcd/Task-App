@@ -72,21 +72,30 @@ const newUserCreationObject = {
 
 const taskOne = {
   _id: new mongoose.Types.ObjectId(),
-  description: "First task.",
+  title: "Royal Gala Apples",
+  description: "Do not confuse with Honeycrisp",
+  dueDateTime: new Date(),
+  category: "Groceries",
   completed: false,
   owner: userOne._id,
 };
 
 const taskTwo = {
   _id: new mongoose.Types.ObjectId(),
-  description: "Second task.",
+  title: "Steal cop car.",
+  description: "Go for a joyride.",
+  dueDateTime: new Date(),
+  category: "",
   completed: true,
   owner: userOne._id,
 };
 
 const taskThree = {
   _id: new mongoose.Types.ObjectId(),
-  description: "Third task.",
+  title: "Turn yourself in.",
+  description: "",
+  dueDateTime: new Date(),
+  category: "",
   completed: false,
   owner: userTwo._id,
 };

@@ -36,7 +36,7 @@ test("Should create task for authenticated user.", async () => {
     .post("/tasks")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send({
-      description: "Test task description.",
+      title: "Test task title.",
     })
     .expect(201);
   // Assert task was created
@@ -76,7 +76,7 @@ test("Should get user's own task.", async () => {
     .send()
     .expect(200);
   // Asset that task one was receieved
-  expect(response.body.description).toContain("First task");
+  expect(response.body.description).toContain("Honeycrisp");
 });
 
 test("Should not get other user's task.", async () => {

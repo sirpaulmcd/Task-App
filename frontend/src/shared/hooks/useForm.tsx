@@ -2,7 +2,7 @@ import { useCallback, useReducer } from "react";
 
 import {
   generateErrorMessage,
-  validateFormInputs,
+  validateFormInputs
 } from "../utils/FormValidator";
 
 //#region Form reducer ========================================================
@@ -106,7 +106,9 @@ export const useForm = (initialInputs: any, initialFormValidity: any) => {
     isValid: initialFormValidity,
   });
 
-  // To be called in OnBlur property of form fields
+  /**
+   * To be called in OnBlur property of form fields
+   */
   const formBlurHandler = useCallback((event: any) => {
     if (event.target.value !== "") {
       formDispatch({
@@ -116,7 +118,9 @@ export const useForm = (initialInputs: any, initialFormValidity: any) => {
     }
   }, []);
 
-  // To be called in OnChange property of form fields
+  /**
+   * To be called in OnChange property of form fields
+   */
   const formInputHandler = useCallback((event: any) => {
     formDispatch({
       type: "CHANGE",
@@ -125,7 +129,36 @@ export const useForm = (initialInputs: any, initialFormValidity: any) => {
     });
   }, []);
 
-  return [formState, formDispatch, formInputHandler, formBlurHandler];
+  /**
+   * To be called when a form is submitted. Runs change and blur dispatches on
+   * all inputs to ensure that inputs that have not been touched are checked
+   * for validity.
+   */
+  // To be called when a form is submitted
+  const formSubmitHandler = useCallback(
+    (event: any) => {
+      for (const input in formState.inputs) {
+        formDispatch({
+          type: "CHANGE",
+          value: formState.inputs[input].value,
+          input: input,
+        });
+        formDispatch({
+          type: "BLUR",
+          input: input,
+        });
+      }
+    },
+    [formState.inputs]
+  );
+
+  return [
+    formState,
+    formDispatch,
+    formInputHandler,
+    formBlurHandler,
+    formSubmitHandler,
+  ];
 };
 
 //#endregion

@@ -3,8 +3,8 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { AppLayout } from "../../shared/components/Layout/AppLayout";
 import { useAccessTokenContext } from "../../shared/contexts/AccessTokenContext";
 import { useThemeContext } from "../../shared/contexts/ThemeContext";
-import HomePage from "../pages/MainPage/HomePage";
 import LandingPage from "../pages/MainPage/LandingPage";
+import TaskPage from "../pages/MainPage/TaskPage";
 import { SettingsPage } from "../pages/SettingsPage/SettingsPage";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
@@ -24,7 +24,7 @@ const App: React.FC<AppProps> = () => {
     routes = (
       <Switch>
         <Route path="/settings" component={SettingsPage} exact />
-        <Route path="/" component={HomePage} exact />
+        <Route path="/" component={TaskPage} exact />
         <Redirect to="/" />
       </Switch>
     );

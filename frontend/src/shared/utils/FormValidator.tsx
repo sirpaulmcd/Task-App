@@ -16,6 +16,7 @@ export const ValidationType = {
   ALPHA: "APLHA",
   ALPHANUMERIC: "ALPHANUMERIC",
   ALPHAWHITESPACE: "ALPHAWHITESPACE",
+  ISODATE: "ISODATE",
 };
 
 //#region Form validation options =============================================
@@ -56,6 +57,10 @@ export const VALIDATOR_ALPHA_WHITESPACE = () => ({
 
 export const VALIDATOR_ALPHANUMERIC = () => ({
   type: ValidationType.ALPHANUMERIC,
+});
+
+export const VALIDATOR_ISODATE = () => ({
+  type: ValidationType.ISODATE,
 });
 
 //#endregion
@@ -103,6 +108,14 @@ const isAlphanumeric = (value: string): boolean => {
 const isAlphaWhitespace = (value: string): boolean => {
   // @ts-ignore
   return validator.isAlpha(value, ["en-US"], { ignore: " " });
+};
+
+const isISODate = (value: string): boolean => {
+  try {
+    return validator.isISO8601(new Date(value).toISOString());
+  } catch (error) {
+    return false;
+  }
 };
 
 //#endregion
@@ -154,6 +167,9 @@ export const validateFormInputs = (
     ) {
       failedRequirements.push(requirement);
     }
+    if (requirement.type === ValidationType.ISODATE && !isISODate(value)) {
+      failedRequirements.push(requirement);
+    }
   }
   return failedRequirements;
 };
@@ -201,6 +217,9 @@ export const generateErrorMessage = (
     }
     if (requirement.type === ValidationType.ALPHAWHITESPACE) {
       newErrorMessage += `only contain letters and spaces`;
+    }
+    if (requirement.type === ValidationType.ISODATE) {
+      newErrorMessage += `be a valid date`;
     }
   }
   return newErrorMessage;
