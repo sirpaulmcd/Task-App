@@ -79,7 +79,13 @@ class TaskService {
   static updateTask = async (req, res) => {
     // Check that only valid properties are being updated
     const updatedProperties = Object.keys(req.body);
-    const validProperties = ["description", "completed"];
+    const validProperties = [
+      "title",
+      "description",
+      "dueDateTime",
+      "category",
+      "completed",
+    ];
     const updatedPropertiesAreValid = updatedProperties.every((property) => {
       return validProperties.includes(property);
     });

@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-const useNewTaskFormStyles = makeStyles((theme) => ({
+const useTaskFormStyles = makeStyles((theme) => ({
   newTaskForm_formLabel: {
     fontWeight: "bold",
     marginLeft: "5px",
@@ -9,4 +9,4 @@ const useNewTaskFormStyles = makeStyles((theme) => ({
   },
 }));
 
-export default useNewTaskFormStyles;
+export default useTaskFormStyles;

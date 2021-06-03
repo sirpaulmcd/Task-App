@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 
 import DateFnsUtils from "@date-io/date-fns";
 import { Button, TextField, Typography } from "@material-ui/core";
@@ -7,23 +7,39 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
   KeyboardDatePicker,
   KeyboardTimePicker,
-  MuiPickersUtilsProvider
+  MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 
 import { useForm } from "../../../../shared/hooks/useForm";
 import {
   VALIDATOR_ISODATE,
   VALIDATOR_MAXLENGTH,
-  VALIDATOR_REQUIRE
+  VALIDATOR_REQUIRE,
 } from "../../../../shared/utils/FormValidator";
-import useNewTaskFormStyles from "./NewTaskFormStyles";
+import useNewTaskFormStyles from "./TaskFormStyles";
 
-interface NewTaskFormProps {
-  getUserTasks: () => Promise<void>;
+interface TaskFormProps {
+  getUserTasks?: () => Promise<void>;
   onClose: () => void;
+  setTask?: React.Dispatch<
+    React.SetStateAction<{
+      id: string;
+      title: string;
+      description: string;
+      dueDateTime: string;
+      category: string;
+      completed: boolean;
+    }>
+  >;
+  task?: any;
 }
 
-const NewTaskForm: React.FC<NewTaskFormProps> = ({ getUserTasks, onClose }) => {
+const TaskForm: React.FC<TaskFormProps> = ({
+  getUserTasks,
+  onClose,
+  setTask,
+  task,
+}) => {
   //#region Styles ------------------------------------------------------------
   const classes = useNewTaskFormStyles();
   //#endregion
@@ -39,7 +55,37 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ getUserTasks, onClose }) => {
     await axios
       .post("http://localhost:8000/tasks", newTask)
       .then(async (res) => {
-        await getUserTasks();
+        if (getUserTasks) {
+          await getUserTasks();
+        }
+        onClose();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  //#endregion
+
+  //#region Create task mutation ----------------------------------------------
+  const updateTaskMutation = async () => {
+    const updatedTask = {
+      title: formState.inputs.title.value,
+      description: formState.inputs.description.value,
+      dueDateTime: formState.inputs.dueDateTime.value,
+      category: formState.inputs.category.value,
+    };
+    await axios
+      .patch(`http://localhost:8000/tasks/${task.id}`, updatedTask)
+      .then(async (res) => {
+        if (setTask) {
+          setTask({
+            ...task,
+            title: res.data.title,
+            description: res.data.description,
+            dueDateTime: res.data.dueDateTime,
+            category: res.data.category,
+          });
+        }
         onClose();
       })
       .catch((error) => {
@@ -49,48 +95,53 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ getUserTasks, onClose }) => {
   //#endregion
 
   //#region Basic form management ---------------------------------------------
-  const [formState, , formInputHandler, formBlurHandler, formSubmitHandler] =
-    useForm(
-      {
-        title: {
-          value: "",
-          isUsed: false,
-          isValid: false,
-          requirements: [VALIDATOR_REQUIRE(), VALIDATOR_MAXLENGTH(100)],
-          failedRequirements: [],
-          errorMessage: "",
-          helperText: "100 char max limit",
-        },
-        description: {
-          value: "",
-          isUsed: false,
-          isValid: true,
-          requirements: [VALIDATOR_MAXLENGTH(1000)],
-          failedRequirements: [],
-          errorMessage: "",
-          helperText: "1000 char max limit",
-        },
-        dueDateTime: {
-          value: null,
-          isUsed: false,
-          isValid: true,
-          requirements: [VALIDATOR_ISODATE()],
-          failedRequirements: [],
-          errorMessage: "",
-          helperText: "Format: dd/mm/yyyy|Format: 08:00 AM",
-        },
-        category: {
-          value: "",
-          isUsed: false,
-          isValid: true,
-          requirements: [],
-          failedRequirements: [],
-          errorMessage: "",
-          helperText: "",
-        },
+  const [
+    formState,
+    formDispatch,
+    formInputHandler,
+    formBlurHandler,
+    formSubmitHandler,
+  ] = useForm(
+    {
+      title: {
+        value: "",
+        isUsed: false,
+        isValid: false,
+        requirements: [VALIDATOR_REQUIRE(), VALIDATOR_MAXLENGTH(100)],
+        failedRequirements: [],
+        errorMessage: "",
+        helperText: "100 char max limit",
       },
-      false
-    );
+      description: {
+        value: "",
+        isUsed: false,
+        isValid: true,
+        requirements: [VALIDATOR_MAXLENGTH(1000)],
+        failedRequirements: [],
+        errorMessage: "",
+        helperText: "1000 char max limit",
+      },
+      dueDateTime: {
+        value: null,
+        isUsed: false,
+        isValid: true,
+        requirements: [VALIDATOR_ISODATE()],
+        failedRequirements: [],
+        errorMessage: "",
+        helperText: "Format: dd/mm/yyyy|Format: 08:00 AM",
+      },
+      category: {
+        value: "",
+        isUsed: false,
+        isValid: true,
+        requirements: [],
+        failedRequirements: [],
+        errorMessage: "",
+        helperText: "",
+      },
+    },
+    false
+  );
 
   /**
    * This method acts as an intermediary step before the form input handler
@@ -99,6 +150,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ getUserTasks, onClose }) => {
    * overwritten to be compatible with the useForm hook.
    */
   const handleCategoryChange = (event: any) => {
+    if (!event) {
+      return;
+    }
     if (!event.target.hasOwnProperty("value")) {
       event = {
         target: {
@@ -141,8 +195,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ getUserTasks, onClose }) => {
     formSubmitHandler(e);
     if (formState.isValid) {
       try {
-        await createTaskMutation();
-        console.log(formState.inputs);
+        if (task) {
+          await updateTaskMutation();
+        } else {
+          await createTaskMutation();
+        }
       } catch (error) {
         console.log(error);
       }
@@ -150,10 +207,26 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ getUserTasks, onClose }) => {
   };
   //#endregion
 
+  //#region Initialization ----------------------------------------------------
+  useEffect(() => {
+    if (task) {
+      for (const input in formState.inputs) {
+        formDispatch({
+          type: "CHANGE",
+          value: task[input],
+          input: input,
+        });
+      }
+      // Populate inputs with task values
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formDispatch, task]);
+  //#endregion
+
   //#region TSX ---------------------------------------------------------------
   return (
     <>
-      <Typography variant="h5">New Task</Typography>
+      <Typography variant="h5">{task ? "Update Task" : "New Task"}</Typography>
       <Typography className={classes.newTaskForm_formLabel} variant="caption">
         Title *
       </Typography>
@@ -198,7 +271,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ getUserTasks, onClose }) => {
         <KeyboardDatePicker
           margin="normal"
           inputVariant="outlined"
-          format="dd/mm/yyyy"
+          format="dd/MM/yyyy"
           value={formState.inputs.dueDateTime.value}
           onChange={handleDueDateTimeChange}
           onBlur={handleDueDateTimeBlur}
@@ -254,11 +327,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ getUserTasks, onClose }) => {
         renderInput={(params) => <TextField {...params} variant="outlined" />}
       />
       <Button variant="contained" color="primary" onClick={submitHandler}>
-        Create
+        {task ? "Update" : "Create"}
       </Button>
     </>
   );
   //#endregion
 };
 
-export default NewTaskForm;
+export default TaskForm;

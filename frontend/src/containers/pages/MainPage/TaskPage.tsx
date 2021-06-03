@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Backdrop, Fab, Fade, Modal, Paper } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 
-import NewTaskForm from "./components/NewTaskForm";
+import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import useTaskPageStyles from "./TaskPageStyles";
 
@@ -68,7 +68,7 @@ const TaskPage: React.FC<TaskPageProps> = () => {
       >
         <Fade in={newTaskModalOpen}>
           <Paper className={classes.taskPage_modalPaper}>
-            <NewTaskForm
+            <TaskForm
               getUserTasks={getUserTasks}
               onClose={handleNewTaskModalClose}
             />
