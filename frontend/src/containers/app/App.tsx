@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { AppLayout } from "../../shared/components/Layout/AppLayout";
 import { useAccessTokenContext } from "../../shared/contexts/AccessTokenContext";
 import { useThemeContext } from "../../shared/contexts/ThemeContext";
-import LandingPage from "../pages/MainPage/LandingPage";
+import LandingPage from "../pages/LandingPage/LandingPage";
 import TaskPage from "../pages/MainPage/TaskPage";
 import { SettingsPage } from "../pages/SettingsPage/SettingsPage";
 import SignInPage from "../pages/SignInPage/SignInPage";
