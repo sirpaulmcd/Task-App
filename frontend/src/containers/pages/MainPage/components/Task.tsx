@@ -10,41 +10,27 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 
 import TaskForm from "./TaskForm";
 import useTaskStyles from "./TaskStyles";
 
 interface TaskProps {
-  id: string;
-  title: string;
-  description: string;
-  dueDateTime: string;
-  category: string;
-  completed: boolean;
+  task: any;
+  appendTaskToList: (task: any) => void;
+  removeTaskFromList: (taskId: string) => void;
+  updateTaskInList: (updatedTask: any) => void;
 }
 
 const Task: React.FC<TaskProps> = ({
-  id,
-  title,
-  description,
-  dueDateTime,
-  category,
-  completed,
+  task,
+  appendTaskToList,
+  removeTaskFromList,
+  updateTaskInList,
 }) => {
   //#region Styles ------------------------------------------------------------
   const classes = useTaskStyles();
-  //#endregion
-
-  //#region Local state -------------------------------------------------------
-  const [task, setTask] = useState({
-    id,
-    title,
-    description,
-    dueDateTime,
-    category,
-    completed,
-  });
   //#endregion
 
   //#region Update task completion status mutation ----------------------------
@@ -54,10 +40,24 @@ const Task: React.FC<TaskProps> = ({
         completed: !task.completed,
       })
       .then((res) => {
-        setTask({
-          ...task,
-          completed: res.data.completed,
-        });
+        if (res.status === 200) {
+          updateTaskInList(res.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  //#endregion
+
+  //#region Delete task mutation ----------------------------------------------
+  const deleteTaskMutation = async () => {
+    await axios
+      .delete(`http://localhost:8000/tasks/${task._id}`)
+      .then(async (res) => {
+        if (removeTaskFromList) {
+          removeTaskFromList(res.data._id);
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -95,7 +95,8 @@ const Task: React.FC<TaskProps> = ({
           <Paper className={classes.task_modalPaper}>
             <TaskForm
               task={task}
-              setTask={setTask}
+              appendTaskToList={appendTaskToList}
+              updateTaskInList={updateTaskInList}
               onClose={handleUpdateTaskModalClose}
             />
           </Paper>
@@ -115,10 +116,10 @@ const Task: React.FC<TaskProps> = ({
   return (
     <>
       {updateTaskModalContent}
-      <li>
+      <li key={task._id}>
         <Paper className={classes.task_paper}>
           <Checkbox
-            id={task.id}
+            id={task._id}
             checked={task.completed}
             onChange={handleCheckBoxChange}
             inputProps={{ "aria-label": "primary checkbox" }}
@@ -129,6 +130,14 @@ const Task: React.FC<TaskProps> = ({
           <Typography>Category: {task.category}</Typography>
           <IconButton aria-label="delete" onClick={handleUpdateTaskModalOpen}>
             <EditIcon />
+          </IconButton>
+          <IconButton
+            aria-label="delete"
+            onClick={async () => {
+              await deleteTaskMutation();
+            }}
+          >
+            <DeleteIcon />
           </IconButton>
         </Paper>
       </li>

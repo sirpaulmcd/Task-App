@@ -19,25 +19,16 @@ import {
 import useNewTaskFormStyles from "./TaskFormStyles";
 
 interface TaskFormProps {
-  getUserTasks?: () => Promise<void>;
+  appendTaskToList?: (task: any) => void;
+  updateTaskInList?: (updatedTask: any) => void;
   onClose: () => void;
-  setTask?: React.Dispatch<
-    React.SetStateAction<{
-      id: string;
-      title: string;
-      description: string;
-      dueDateTime: string;
-      category: string;
-      completed: boolean;
-    }>
-  >;
   task?: any;
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({
-  getUserTasks,
+  appendTaskToList,
+  updateTaskInList,
   onClose,
-  setTask,
   task,
 }) => {
   //#region Styles ------------------------------------------------------------
@@ -55,8 +46,8 @@ const TaskForm: React.FC<TaskFormProps> = ({
     await axios
       .post("http://localhost:8000/tasks", newTask)
       .then(async (res) => {
-        if (getUserTasks) {
-          await getUserTasks();
+        if (appendTaskToList) {
+          appendTaskToList(res.data);
         }
         onClose();
       })
@@ -75,16 +66,10 @@ const TaskForm: React.FC<TaskFormProps> = ({
       category: formState.inputs.category.value,
     };
     await axios
-      .patch(`http://localhost:8000/tasks/${task.id}`, updatedTask)
+      .patch(`http://localhost:8000/tasks/${task._id}`, updatedTask)
       .then(async (res) => {
-        if (setTask) {
-          setTask({
-            ...task,
-            title: res.data.title,
-            description: res.data.description,
-            dueDateTime: res.data.dueDateTime,
-            category: res.data.category,
-          });
+        if (updateTaskInList) {
+          updateTaskInList(res.data);
         }
         onClose();
       })
