@@ -28,6 +28,13 @@ const useAuthenticatedHeaderStyles = makeStyles((theme) => ({
   authenticatedHeader_taskIcon: {
     marginRight: "5px", // theme.spacing(2);
   },
+  authenticatedHeader_formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  authenticatedHeader_selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
   //#endregion
   //#region Right container
   authenticatedHeader_rightContainer: {

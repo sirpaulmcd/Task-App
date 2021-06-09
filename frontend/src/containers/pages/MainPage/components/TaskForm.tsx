@@ -10,6 +10,7 @@ import {
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 
+import { useUserContext } from "../../../../shared/contexts/UserContext";
 import { useForm } from "../../../../shared/hooks/useForm";
 import {
   VALIDATOR_ISODATE,
@@ -19,20 +20,18 @@ import {
 import useNewTaskFormStyles from "./TaskFormStyles";
 
 interface TaskFormProps {
-  appendTaskToList?: (task: any) => void;
-  updateTaskInList?: (updatedTask: any) => void;
+  getUserTasks: () => Promise<void>;
   onClose: () => void;
   task?: any;
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({
-  appendTaskToList,
-  updateTaskInList,
-  onClose,
-  task,
-}) => {
+const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
   //#region Styles ------------------------------------------------------------
   const classes = useNewTaskFormStyles();
+  //#endregion
+
+  //#region Context -----------------------------------------------------------
+  const [user]: any = useUserContext();
   //#endregion
 
   //#region Create task mutation ----------------------------------------------
@@ -46,8 +45,8 @@ const TaskForm: React.FC<TaskFormProps> = ({
     await axios
       .post("http://localhost:8000/tasks", newTask)
       .then(async (res) => {
-        if (appendTaskToList) {
-          appendTaskToList(res.data);
+        if (res.status === 201 && getUserTasks) {
+          await getUserTasks();
         }
         onClose();
       })
@@ -68,8 +67,8 @@ const TaskForm: React.FC<TaskFormProps> = ({
     await axios
       .patch(`http://localhost:8000/tasks/${task._id}`, updatedTask)
       .then(async (res) => {
-        if (updateTaskInList) {
-          updateTaskInList(res.data);
+        if (res.status === 200 && getUserTasks) {
+          getUserTasks();
         }
         onClose();
       })
@@ -307,7 +306,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
         value={formState.inputs.category.value}
         onInputChange={handleCategoryChange}
         onBlur={formBlurHandler}
-        options={["Hello", "Hi", "Howdy"]}
+        options={user.lists}
         style={{ width: 300 }}
         renderInput={(params) => <TextField {...params} variant="outlined" />}
       />

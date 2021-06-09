@@ -21,15 +21,20 @@ class TaskService {
 
   /**
    * Get all your tasks. Parameters:
+   * - /tasks?category=(string)
    * - /tasks?completed=(bool)
    * - /tasks?limit=(int)
    * - /tasks?skip=(int)
    * - /tasks?sortBy=(property):(asc/desc)
+   * - chain with &
    */
   static getTasks = async (req, res) => {
     try {
       // Handle match query params (if any)
       const match = {};
+      if (req.query.category) {
+        match.category = req.query.category;
+      }
       if (req.query.completed) {
         match.completed = req.query.completed === "true";
       }

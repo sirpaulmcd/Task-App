@@ -1,5 +1,6 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router";
 
 import {
   Backdrop,
@@ -27,41 +28,47 @@ const TaskList: React.FC<TaskListProps> = () => {
   const [tasks, setTasks] = useState<{}[]>([]);
   //#endregion
 
+  //#region Routing -----------------------------------------------------------
+  const params: any = useParams();
+  //#endregion
+
   //#region Get user tasks query ----------------------------------------------
-  const getUserTasks = async () => {
+  let taskUrl = "http://localhost:8000/tasks?sortBy=dueDateTime:asc";
+  if (params.taskList) {
+    if (params.taskList === "Finished") {
+      taskUrl += "&completed=true";
+    } else {
+      taskUrl += `&category=${params.taskList}`;
+    }
+  }
+
+  const getUserTasks = useCallback(async () => {
     await axios
-      .get("http://localhost:8000/tasks")
+      .get(taskUrl)
       .then((res) => {
-        if (res.status === 200 && res.data.length > 0) {
-          setTasks(res.data);
+        if (res.status === 200) {
+          setTasks(
+            res.data.sort((a: any, b: any) => {
+              if (a.dueDateTime !== null) {
+                return -1;
+              } else {
+                return 1;
+              }
+            })
+          );
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  };
+  }, [taskUrl]);
   //#endregion
 
   //#region Initialization ----------------------------------------------------
   useEffect(() => {
+    setTasks([]);
     getUserTasks();
-  }, []);
-  //#endregion
-
-  //#region Task list management ----------------------------------------------
-  const appendTaskToList = (task: any) => {
-    setTasks([...tasks, task]);
-  };
-
-  const updateTaskInList = (updatedTask: any) => {
-    const newTasks = tasks.filter((task: any) => task._id !== updatedTask._id);
-    newTasks.push(updatedTask);
-    setTasks(newTasks);
-  };
-
-  const removeTaskFromList = (taskId: string) => {
-    setTasks(tasks.filter((task: any) => task._id !== taskId));
-  };
+  }, [params.taskList, setTasks, getUserTasks]);
   //#endregion
 
   //#region New task modal ----------------------------------------------------
@@ -92,7 +99,7 @@ const TaskList: React.FC<TaskListProps> = () => {
         <Fade in={newTaskModalOpen}>
           <Paper className={classes.taskList_modalPaper}>
             <TaskForm
-              appendTaskToList={appendTaskToList}
+              getUserTasks={getUserTasks}
               onClose={handleNewTaskModalClose}
             />
           </Paper>
@@ -103,19 +110,24 @@ const TaskList: React.FC<TaskListProps> = () => {
   //#endregion
 
   //#region Task content ------------------------------------------------------
+  const taskShouldRender = (task: any): boolean => {
+    return (
+      !task.completed || (task.completed && params.taskList === "Finished")
+    );
+  };
+
   const tasksContent = (
     <>
       <Container maxWidth="sm">
         <ul className={classes.taskList_unorderedList}>
-          {tasks.map((task: any) => (
-            <Task
-              key={task._id}
-              task={task}
-              appendTaskToList={appendTaskToList}
-              removeTaskFromList={removeTaskFromList}
-              updateTaskInList={updateTaskInList}
-            />
-          ))}
+          {tasks.map((task: any) => {
+            if (taskShouldRender(task)) {
+              return (
+                <Task key={task._id} task={task} getUserTasks={getUserTasks} />
+              );
+            }
+            return null;
+          })}
         </ul>
       </Container>
     </>

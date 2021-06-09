@@ -52,6 +52,10 @@ const userSchema = new mongoose.Schema(
       },
     },
     theme: { type: String, default: "LIGHT" },
+    lists: {
+      type: [{ type: String, required: true }],
+      default: ["Default", "Personal", "Shopping", "Wishlist", "Work"],
+    },
     //#endregion
     //#region Private fields --------------------------------------------------
     password: {

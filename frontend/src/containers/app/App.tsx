@@ -24,6 +24,7 @@ const App: React.FC<AppProps> = () => {
     routes = (
       <Switch>
         <Route path="/settings" component={SettingsPage} exact />
+        <Route path="/:taskList" component={TaskPage} exact />
         <Route path="/" component={TaskPage} exact />
         <Redirect to="/" />
       </Switch>

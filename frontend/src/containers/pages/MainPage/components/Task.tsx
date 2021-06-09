@@ -18,17 +18,10 @@ import useTaskStyles from "./TaskStyles";
 
 interface TaskProps {
   task: any;
-  appendTaskToList: (task: any) => void;
-  removeTaskFromList: (taskId: string) => void;
-  updateTaskInList: (updatedTask: any) => void;
+  getUserTasks: () => Promise<void>;
 }
 
-const Task: React.FC<TaskProps> = ({
-  task,
-  appendTaskToList,
-  removeTaskFromList,
-  updateTaskInList,
-}) => {
+const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   //#region Styles ------------------------------------------------------------
   const classes = useTaskStyles();
   //#endregion
@@ -39,9 +32,9 @@ const Task: React.FC<TaskProps> = ({
       .patch(`http://localhost:8000/tasks/${taskId}`, {
         completed: !task.completed,
       })
-      .then((res) => {
-        if (res.status === 200) {
-          updateTaskInList(res.data);
+      .then(async (res) => {
+        if (res.status === 200 && getUserTasks) {
+          await getUserTasks();
         }
       })
       .catch((error) => {
@@ -55,8 +48,8 @@ const Task: React.FC<TaskProps> = ({
     await axios
       .delete(`http://localhost:8000/tasks/${task._id}`)
       .then(async (res) => {
-        if (removeTaskFromList) {
-          removeTaskFromList(res.data._id);
+        if (res.status === 200 && getUserTasks) {
+          await getUserTasks();
         }
       })
       .catch((error) => {
@@ -95,8 +88,7 @@ const Task: React.FC<TaskProps> = ({
           <Paper className={classes.task_modalPaper}>
             <TaskForm
               task={task}
-              appendTaskToList={appendTaskToList}
-              updateTaskInList={updateTaskInList}
+              getUserTasks={getUserTasks}
               onClose={handleUpdateTaskModalClose}
             />
           </Paper>
@@ -112,10 +104,9 @@ const Task: React.FC<TaskProps> = ({
   };
   //#endregion
 
-  //#region TSX ---------------------------------------------------------------
-  return (
+  //#region Task content ------------------------------------------------------
+  const taskContent = (
     <>
-      {updateTaskModalContent}
       <li key={task._id}>
         <Paper className={classes.task_paper}>
           <Checkbox
@@ -141,6 +132,15 @@ const Task: React.FC<TaskProps> = ({
           </IconButton>
         </Paper>
       </li>
+    </>
+  );
+  //#endregion
+
+  //#region TSX ---------------------------------------------------------------
+  return (
+    <>
+      {updateTaskModalContent}
+      {taskContent}
     </>
   );
   //#endregion

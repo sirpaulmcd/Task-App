@@ -18,6 +18,7 @@ const taskSchema = new mongoose.Schema(
     category: {
       type: String,
       trim: true,
+      default: "Default",
     },
     completed: {
       type: Boolean,
