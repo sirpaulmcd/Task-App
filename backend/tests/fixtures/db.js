@@ -73,7 +73,6 @@ const newUserCreationObject = {
 const taskOne = {
   _id: new mongoose.Types.ObjectId(),
   title: "Royal Gala Apples",
-  description: "Do not confuse with Honeycrisp",
   dueDateTime: new Date(),
   category: "Groceries",
   completed: false,
@@ -83,7 +82,6 @@ const taskOne = {
 const taskTwo = {
   _id: new mongoose.Types.ObjectId(),
   title: "Steal cop car.",
-  description: "Go for a joyride.",
   dueDateTime: new Date(),
   category: "",
   completed: true,
@@ -93,7 +91,6 @@ const taskTwo = {
 const taskThree = {
   _id: new mongoose.Types.ObjectId(),
   title: "Turn yourself in.",
-  description: "",
   dueDateTime: new Date(),
   category: "",
   completed: false,

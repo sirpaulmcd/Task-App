@@ -7,7 +7,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
   KeyboardDatePicker,
   KeyboardTimePicker,
-  MuiPickersUtilsProvider,
+  MuiPickersUtilsProvider
 } from "@material-ui/pickers";
 
 import { useUserContext } from "../../../../shared/contexts/UserContext";
@@ -15,7 +15,7 @@ import { useForm } from "../../../../shared/hooks/useForm";
 import {
   VALIDATOR_ISODATE,
   VALIDATOR_MAXLENGTH,
-  VALIDATOR_REQUIRE,
+  VALIDATOR_REQUIRE
 } from "../../../../shared/utils/FormValidator";
 import useNewTaskFormStyles from "./TaskFormStyles";
 
@@ -38,7 +38,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
   const createTaskMutation = async () => {
     const newTask = {
       title: formState.inputs.title.value,
-      description: formState.inputs.description.value,
       dueDateTime: formState.inputs.dueDateTime.value,
       category: formState.inputs.category.value,
     };
@@ -60,7 +59,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
   const updateTaskMutation = async () => {
     const updatedTask = {
       title: formState.inputs.title.value,
-      description: formState.inputs.description.value,
       dueDateTime: formState.inputs.dueDateTime.value,
       category: formState.inputs.category.value,
     };
@@ -95,15 +93,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
         failedRequirements: [],
         errorMessage: "",
         helperText: "100 char max limit",
-      },
-      description: {
-        value: "",
-        isUsed: false,
-        isValid: true,
-        requirements: [VALIDATOR_MAXLENGTH(1000)],
-        failedRequirements: [],
-        errorMessage: "",
-        helperText: "1000 char max limit",
       },
       dueDateTime: {
         value: null,
@@ -225,27 +214,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
           formState.inputs.title.errorMessage && formState.inputs.title.isUsed
             ? formState.inputs.title.errorMessage
             : formState.inputs.title.helperText
-        }
-      />
-      <Typography className={classes.newTaskForm_formLabel} variant="caption">
-        Description
-      </Typography>
-      <TextField
-        id="description"
-        variant="outlined"
-        multiline
-        value={formState.inputs.description.value}
-        onChange={formInputHandler}
-        onBlur={formBlurHandler}
-        error={
-          formState.inputs.description.isUsed &&
-          !formState.inputs.description.isValid
-        }
-        helperText={
-          formState.inputs.description.errorMessage &&
-          formState.inputs.description.isUsed
-            ? formState.inputs.description.errorMessage
-            : formState.inputs.description.helperText
         }
       />
       <MuiPickersUtilsProvider utils={DateFnsUtils}>

@@ -7,6 +7,9 @@ class TaskService {
    * Create a new task.
    */
   static createTask = async (req, res) => {
+    if (req.body.category === "") {
+      delete req.body.category;
+    }
     const task = new Task({
       ...req.body,
       owner: req.user._id,
@@ -84,13 +87,7 @@ class TaskService {
   static updateTask = async (req, res) => {
     // Check that only valid properties are being updated
     const updatedProperties = Object.keys(req.body);
-    const validProperties = [
-      "title",
-      "description",
-      "dueDateTime",
-      "category",
-      "completed",
-    ];
+    const validProperties = ["title", "dueDateTime", "category", "completed"];
     const updatedPropertiesAreValid = updatedProperties.every((property) => {
       return validProperties.includes(property);
     });

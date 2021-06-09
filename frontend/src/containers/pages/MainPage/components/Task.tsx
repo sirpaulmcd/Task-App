@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useParams } from "react-router";
 
 import {
   Backdrop,
@@ -8,7 +9,7 @@ import {
   IconButton,
   Modal,
   Paper,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -24,6 +25,10 @@ interface TaskProps {
 const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   //#region Styles ------------------------------------------------------------
   const classes = useTaskStyles();
+  //#endregion
+
+  //#region Routing -----------------------------------------------------------
+  const params: any = useParams();
   //#endregion
 
   //#region Update task completion status mutation ----------------------------
@@ -105,6 +110,36 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   //#endregion
 
   //#region Task content ------------------------------------------------------
+  let dateFieldContent = null;
+  if (task.dueDateTime) {
+    dateFieldContent = (
+      <>
+        <Typography>
+          Due:{" "}
+          {new Date(task.dueDateTime).toLocaleTimeString(undefined, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </Typography>
+      </>
+    );
+  }
+
+  let categoryFieldContent = null;
+  if (
+    !params.taskList ||
+    (params.taskList && task.category !== params.taskList)
+  ) {
+    categoryFieldContent = (
+      <>
+        <Typography>{task.category}</Typography>
+      </>
+    );
+  }
   const taskContent = (
     <>
       <li key={task._id}>
@@ -115,10 +150,9 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
             onChange={handleCheckBoxChange}
             inputProps={{ "aria-label": "primary checkbox" }}
           />
-          <Typography>Title: {task.title}</Typography>
-          <Typography>Description: {task.description}</Typography>
-          <Typography>Due: {task.dueDateTime}</Typography>
-          <Typography>Category: {task.category}</Typography>
+          <Typography>{task.title}</Typography>
+          {dateFieldContent}
+          {categoryFieldContent}
           <IconButton aria-label="delete" onClick={handleUpdateTaskModalOpen}>
             <EditIcon />
           </IconButton>

@@ -50,7 +50,7 @@ test("Should not create task for unauthenticated user.", async () => {
   await request(app)
     .post("/tasks")
     .send({
-      description: "Test task description.",
+      title: "Test task.",
     })
     .expect(401);
 });
@@ -76,7 +76,7 @@ test("Should get user's own task.", async () => {
     .send()
     .expect(200);
   // Asset that task one was receieved
-  expect(response.body.description).toContain("Honeycrisp");
+  expect(response.body.title).toContain("Royal Gala Apples");
 });
 
 test("Should not get other user's task.", async () => {
@@ -92,13 +92,13 @@ test("Should update task for authenticated user.", async () => {
     .patch(`/tasks/${taskTwo._id}`)
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send({
-      description: "Nevermind",
+      title: "Whoops",
       completed: false,
     })
     .expect(200);
   // Asset that task was updated
   const task = await Task.findById(taskTwo._id);
-  expect(task.description).toEqual("Nevermind");
+  expect(task.title).toEqual("Whoops");
   expect(task.completed).toEqual(false);
 });
 
