@@ -1,24 +1,14 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 const useAuthenticatedHeaderStyles = makeStyles((theme) => ({
-  //#region Preheader
-  authenticatedHeader_menuButton: {
-    [theme.breakpoints.up("md")]: {
-      display: "none",
-    },
-  },
-  //#endregion
   //#region Left container
   authenticatedHeader_leftContainer: {
-    width: "50%",
+    width: "100%",
+    height: "64px",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    [theme.breakpoints.down("sm")]: {
-      width: "100%",
-      justifyContent: "center",
-    },
   },
   authenticatedHeader_logoButton: {
     [theme.breakpoints.down("xs")]: {
@@ -26,31 +16,39 @@ const useAuthenticatedHeaderStyles = makeStyles((theme) => ({
     },
   },
   authenticatedHeader_taskIcon: {
-    marginRight: "5px", // theme.spacing(2);
-  },
-  authenticatedHeader_formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
+    marginRight: "5px",
+    [theme.breakpoints.down("xs")]: {
+      marginRight: "0px",
+    },
   },
   authenticatedHeader_selectEmpty: {
-    marginTop: theme.spacing(2),
+    height: "60%",
+    marginLeft: theme.spacing(2),
+    color: "white",
   },
   //#endregion
   //#region Right container
   authenticatedHeader_rightContainer: {
-    width: "50%",
+    height: "64px",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    [theme.breakpoints.down("sm")]: {
-      width: "auto",
+  },
+  authenticatedHeader_avatarButton: {
+    [theme.breakpoints.down("xs")]: {
+      display: "none",
     },
   },
   authenticatedHeader_avatar: {
     width: theme.spacing(5),
     height: theme.spacing(5),
     backgroundColor: theme.palette.secondary.main,
+  },
+  authenticatedHeader_menuButton: {
+    [theme.breakpoints.up("sm")]: {
+      display: "none",
+    },
   },
   //#endregion
 }));

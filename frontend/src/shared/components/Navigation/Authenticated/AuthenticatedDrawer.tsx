@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Link } from "react-router-dom";
 
 import {
   Divider,
@@ -27,10 +28,15 @@ export const AuthenticatedDrawer: React.FC<AuthenticatedDrawerProps> = ({
   //#region TSX ---------------------------------------------------------------
   return ReactDOM.createPortal(
     <>
-      <Drawer anchor="left" open={open} onClose={toggleDrawerHandler}>
+      <Drawer anchor="right" open={open} onClose={toggleDrawerHandler}>
         <List className={classes.authenticatedDrawer_list}>
-          <ListItem button onClick={toggleDrawerHandler}>
-            <ListItemText primary="Header buttons" />
+          <ListItem
+            button
+            component={Link}
+            to={"/settings"}
+            onClick={toggleDrawerHandler}
+          >
+            <ListItemText primary="Settings" />
           </ListItem>
         </List>
         <Divider />

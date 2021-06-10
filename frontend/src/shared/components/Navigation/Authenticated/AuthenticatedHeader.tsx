@@ -47,15 +47,6 @@ export const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
 
   const logoButtonContent = (
     <>
-      <IconButton
-        edge="start"
-        className={classes.authenticatedHeader_menuButton}
-        color="inherit"
-        aria-label="menu"
-        onClick={toggleDrawerHandler}
-      >
-        <MenuIcon />
-      </IconButton>
       <Button
         className={classes.authenticatedHeader_logoButton}
         component={Link}
@@ -69,6 +60,22 @@ export const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
       </Button>
     </>
   );
+
+  //#region Menu button--------------------------------------------------------
+  const menuButtonContent = (
+    <>
+      <IconButton
+        edge="start"
+        className={classes.authenticatedHeader_menuButton}
+        color="inherit"
+        aria-label="menu"
+        onClick={toggleDrawerHandler}
+      >
+        <MenuIcon />
+      </IconButton>
+    </>
+  );
+  //#endregion
 
   //#region List select -------------------------------------------------------
   const [taskList, setTaskList] = React.useState("");
@@ -85,7 +92,7 @@ export const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
         onChange={handleTaskListSelectChange}
         displayEmpty
         className={classes.authenticatedHeader_selectEmpty}
-        inputProps={{ "aria-label": "Without label" }}
+        variant="outlined"
       >
         <MenuItem value="">
           <em>All Lists</em>
@@ -122,6 +129,7 @@ export const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
   const avatarMenuContent = (
     <>
       <IconButton
+        className={classes.authenticatedHeader_avatarButton}
         id="avatarMenu"
         aria-haspopup="true"
         onClick={clickAvatarMenuHandler}
@@ -162,6 +170,7 @@ export const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
             </div>
             <div className={classes.authenticatedHeader_rightContainer}>
               {avatarMenuContent}
+              {menuButtonContent}
             </div>
           </Toolbar>
         </Container>
