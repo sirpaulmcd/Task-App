@@ -114,8 +114,7 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   if (task.dueDateTime) {
     dateFieldContent = (
       <>
-        <Typography>
-          Due:{" "}
+        <Typography variant="body2">
           {new Date(task.dueDateTime).toLocaleTimeString(undefined, {
             weekday: "long",
             year: "numeric",
@@ -136,7 +135,7 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   ) {
     categoryFieldContent = (
       <>
-        <Typography>{task.category}</Typography>
+        <Typography variant="body2">{task.category}</Typography>
       </>
     );
   }
@@ -144,26 +143,32 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
     <>
       <li key={task._id}>
         <Paper className={classes.task_paper}>
-          <Checkbox
-            id={task._id}
-            checked={task.completed}
-            onChange={handleCheckBoxChange}
-            inputProps={{ "aria-label": "primary checkbox" }}
-          />
-          <Typography>{task.title}</Typography>
-          {dateFieldContent}
-          {categoryFieldContent}
-          <IconButton aria-label="delete" onClick={handleUpdateTaskModalOpen}>
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            aria-label="delete"
-            onClick={async () => {
-              await deleteTaskMutation();
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
+          <div className={classes.task_leftContainer}>
+            <Checkbox
+              id={task._id}
+              checked={task.completed}
+              onChange={handleCheckBoxChange}
+              inputProps={{ "aria-label": "primary checkbox" }}
+            />
+            <div className={classes.task_infoContainer}>
+              <Typography variant="h6">{task.title}</Typography>
+              {dateFieldContent}
+              {categoryFieldContent}
+            </div>
+          </div>
+          <div className={classes.task_rightContainer}>
+            <IconButton aria-label="delete" onClick={handleUpdateTaskModalOpen}>
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              onClick={async () => {
+                await deleteTaskMutation();
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
         </Paper>
       </li>
     </>
