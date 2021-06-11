@@ -1,0 +1,54 @@
+name: Continuous Integration - Frontend
+
+# This action works with pull requests and pushes
+on:
+  pull_request:
+    paths:
+      - frontend/**
+    branches:
+      - dev
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Create environment
+        run: |
+          sudo apt update -y
+          sudo apt install nodejs npm
+          cd frontend
+          npm ci
+
+      - name: Check prettier
+        run: |
+          cd frontend
+          npm run format
+
+  lint:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Create environment
+        run: |
+          sudo apt update -y
+          sudo apt install nodejs npm
+          cd frontend
+          npm ci
+
+      - name: Check linting
+        run: |
+          cd frontend
+          npm run lint
