@@ -1,9 +1,16 @@
 import axios from "axios";
 import React, { useEffect } from "react";
+import { useParams } from "react-router";
 
 import DateFnsUtils from "@date-io/date-fns";
-import { Button, TextField, Typography } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import {
+  Button,
+  Container,
+  MenuItem,
+  Select,
+  TextField,
+  Typography
+} from "@material-ui/core";
 import {
   KeyboardDatePicker,
   KeyboardTimePicker,
@@ -32,6 +39,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
 
   //#region Context -----------------------------------------------------------
   const [user]: any = useUserContext();
+  //#endregion
+
+  //#region Routing -----------------------------------------------------------
+  const params: any = useParams();
   //#endregion
 
   //#region Create task mutation ----------------------------------------------
@@ -118,18 +129,21 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
 
   /**
    * This method acts as an intermediary step before the form input handler
-   * because the autocomplete box sometimes throws events without an
-   * `event.target.value` field. For those cases, the event is manually
-   * overwritten to be compatible with the useForm hook.
+   * because the select throws events without an `event.target.id` field. For
+   * those cases, the event is manually overwritten to be compatible with the
+   * useForm hook.
    */
   const handleCategoryChange = (event: any) => {
     if (!event) {
       return;
     }
-    if (!event.target.hasOwnProperty("value")) {
+    if (
+      !event.target.hasOwnProperty("value") ||
+      !event.target.hasOwnProperty("id")
+    ) {
       event = {
         target: {
-          value: event.target.textContent,
+          value: event.target.value,
           id: "category",
         },
       };
@@ -182,6 +196,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
 
   //#region Initialization ----------------------------------------------------
   useEffect(() => {
+    // Populate form with task info if updating task
     if (task) {
       for (const input in formState.inputs) {
         formDispatch({
@@ -190,97 +205,124 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
           input: input,
         });
       }
-      // Populate inputs with task values
+    }
+    // Populate form category with working list if applicable
+    else {
+      formDispatch({
+        type: "CHANGE",
+        value: user.lists.includes(params.taskList)
+          ? params.taskList
+          : "Default",
+        input: "category",
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formDispatch, task]);
+  }, [formDispatch, task, params.tasklist, user]);
   //#endregion
 
   //#region TSX ---------------------------------------------------------------
   return (
     <>
-      <Typography variant="h5">{task ? "Update Task" : "New Task"}</Typography>
-      <Typography className={classes.newTaskForm_formLabel} variant="caption">
-        Title *
-      </Typography>
-      <TextField
-        id="title"
-        variant="outlined"
-        value={formState.inputs.title.value}
-        onChange={formInputHandler}
-        onBlur={formBlurHandler}
-        error={formState.inputs.title.isUsed && !formState.inputs.title.isValid}
-        helperText={
-          formState.inputs.title.errorMessage && formState.inputs.title.isUsed
-            ? formState.inputs.title.errorMessage
-            : formState.inputs.title.helperText
-        }
-      />
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <Typography className={classes.newTaskForm_formLabel} variant="caption">
-          Due Date
+      <Container className={classes.newTaskForm_formContainer} maxWidth="sm">
+        <Typography className={classes.newTaskForm_title} variant="h5">
+          {task ? "Update Task" : "New Task"}
         </Typography>
-        <KeyboardDatePicker
-          margin="normal"
-          inputVariant="outlined"
-          format="dd/MM/yyyy"
-          value={formState.inputs.dueDateTime.value}
-          onChange={handleDueDateTimeChange}
-          onBlur={handleDueDateTimeBlur}
-          KeyboardButtonProps={{
-            "aria-label": "change date",
-          }}
+        <Typography className={classes.newTaskForm_formLabel} variant="caption">
+          Title *
+        </Typography>
+        <TextField
+          id="title"
+          variant="outlined"
+          value={formState.inputs.title.value}
+          onChange={formInputHandler}
+          onBlur={formBlurHandler}
           error={
-            formState.inputs.dueDateTime.isUsed &&
-            !formState.inputs.dueDateTime.isValid
+            formState.inputs.title.isUsed && !formState.inputs.title.isValid
           }
           helperText={
-            formState.inputs.dueDateTime.errorMessage &&
-            formState.inputs.dueDateTime.isUsed
-              ? formState.inputs.dueDateTime.errorMessage
-              : formState.inputs.dueDateTime.helperText.split("|")[0]
+            formState.inputs.title.errorMessage && formState.inputs.title.isUsed
+              ? formState.inputs.title.errorMessage
+              : formState.inputs.title.helperText
           }
         />
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <Typography
+            className={classes.newTaskForm_formLabel}
+            variant="caption"
+          >
+            Due Date
+          </Typography>
+          <KeyboardDatePicker
+            inputVariant="outlined"
+            format="dd/MM/yyyy"
+            value={formState.inputs.dueDateTime.value}
+            onChange={handleDueDateTimeChange}
+            onBlur={handleDueDateTimeBlur}
+            KeyboardButtonProps={{
+              "aria-label": "change date",
+            }}
+            error={
+              formState.inputs.dueDateTime.isUsed &&
+              !formState.inputs.dueDateTime.isValid
+            }
+            helperText={
+              formState.inputs.dueDateTime.errorMessage &&
+              formState.inputs.dueDateTime.isUsed
+                ? formState.inputs.dueDateTime.errorMessage
+                : formState.inputs.dueDateTime.helperText.split("|")[0]
+            }
+          />
+          <Typography
+            className={classes.newTaskForm_formLabel}
+            variant="caption"
+          >
+            Due Time
+          </Typography>
+          <KeyboardTimePicker
+            inputVariant="outlined"
+            value={formState.inputs.dueDateTime.value}
+            onChange={handleDueDateTimeChange}
+            onBlur={handleDueDateTimeBlur}
+            KeyboardButtonProps={{
+              "aria-label": "change time",
+            }}
+            error={
+              formState.inputs.dueDateTime.isUsed &&
+              !formState.inputs.dueDateTime.isValid
+            }
+            helperText={
+              formState.inputs.dueDateTime.errorMessage &&
+              formState.inputs.dueDateTime.isUsed
+                ? formState.inputs.dueDateTime.errorMessage
+                : formState.inputs.dueDateTime.helperText.split("|")[1]
+            }
+          />
+        </MuiPickersUtilsProvider>
         <Typography className={classes.newTaskForm_formLabel} variant="caption">
-          Due Time
+          Category
         </Typography>
-        <KeyboardTimePicker
-          margin="normal"
-          inputVariant="outlined"
-          value={formState.inputs.dueDateTime.value}
-          onChange={handleDueDateTimeChange}
-          onBlur={handleDueDateTimeBlur}
-          KeyboardButtonProps={{
-            "aria-label": "change time",
-          }}
-          error={
-            formState.inputs.dueDateTime.isUsed &&
-            !formState.inputs.dueDateTime.isValid
-          }
-          helperText={
-            formState.inputs.dueDateTime.errorMessage &&
-            formState.inputs.dueDateTime.isUsed
-              ? formState.inputs.dueDateTime.errorMessage
-              : formState.inputs.dueDateTime.helperText.split("|")[1]
-          }
-        />
-      </MuiPickersUtilsProvider>
-      <Typography className={classes.newTaskForm_formLabel} variant="caption">
-        Category
-      </Typography>
-      <Autocomplete
-        id="category"
-        freeSolo
-        value={formState.inputs.category.value}
-        onInputChange={handleCategoryChange}
-        onBlur={formBlurHandler}
-        options={user.lists}
-        style={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} variant="outlined" />}
-      />
-      <Button variant="contained" color="primary" onClick={submitHandler}>
-        {task ? "Update" : "Create"}
-      </Button>
+        <Select
+          labelId="category"
+          id="category"
+          variant="outlined"
+          value={formState.inputs.category.value}
+          onChange={handleCategoryChange}
+        >
+          {user.lists.map((listName: string) => (
+            <MenuItem key={listName} value={listName}>
+              {listName}
+            </MenuItem>
+          ))}
+        </Select>
+        <Button
+          className={classes.newTaskForm_submitButton}
+          variant="contained"
+          color="primary"
+          onClick={submitHandler}
+        >
+          {task ? "Update" : "Create"}
+        </Button>
+      </Container>
     </>
   );
   //#endregion

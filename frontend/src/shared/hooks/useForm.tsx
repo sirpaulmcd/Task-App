@@ -2,7 +2,7 @@ import { useCallback, useReducer } from "react";
 
 import {
   generateErrorMessage,
-  validateFormInputs,
+  validateFormInputs
 } from "../utils/FormValidator";
 
 //#region Form reducer ========================================================
