@@ -25,6 +25,9 @@ const useAuthenticatedHeaderStyles = makeStyles((theme) => ({
     height: "60%",
     marginLeft: theme.spacing(2),
     color: "white",
+    [theme.breakpoints.down("xs")]: {
+      marginLeft: theme.spacing(0),
+    },
   },
   //#endregion
   //#region Right container

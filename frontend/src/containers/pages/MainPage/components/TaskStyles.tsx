@@ -26,16 +26,27 @@ const useTaskStyles = makeStyles((theme) => ({
   },
   task_rightContainer: {
     display: "flex",
-    alignItems: "flex-start",
     justifyContent: "flex-end",
+    alignItems: "center",
     width: "25%",
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column",
+      justifyContent: "flex-start",
+      alignItems: "flex-end",
+    },
+  },
+  task_checkBoxContainer: {
+    marginRight: "10px",
   },
   task_infoContainer: {
     display: "flex",
     flexDirection: "column",
-    width: "100%",
+    flexGrow: 1,
     wordWrap: "break-word",
   },
+  task_titleText: {},
+  task_dueDateTimeText: {},
+  task_categoryText: {},
 }));
 
 export default useTaskStyles;

@@ -114,7 +114,7 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   if (task.dueDateTime) {
     dateFieldContent = (
       <>
-        <Typography variant="body2">
+        <Typography className={classes.task_dueDateTimeText} variant="body2">
           {new Date(task.dueDateTime).toLocaleTimeString(undefined, {
             weekday: "long",
             year: "numeric",
@@ -135,7 +135,9 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   ) {
     categoryFieldContent = (
       <>
-        <Typography variant="body2">{task.category}</Typography>
+        <Typography className={classes.task_categoryText} variant="body2">
+          {task.category}
+        </Typography>
       </>
     );
   }
@@ -144,14 +146,18 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
       <li key={task._id}>
         <Paper className={classes.task_paper}>
           <div className={classes.task_leftContainer}>
-            <Checkbox
-              id={task._id}
-              checked={task.completed}
-              onChange={handleCheckBoxChange}
-              inputProps={{ "aria-label": "primary checkbox" }}
-            />
+            <div className={classes.task_checkBoxContainer}>
+              <Checkbox
+                id={task._id}
+                checked={task.completed}
+                onChange={handleCheckBoxChange}
+                inputProps={{ "aria-label": "primary checkbox" }}
+              />
+            </div>
             <div className={classes.task_infoContainer}>
-              <Typography variant="h6">{task.title}</Typography>
+              <Typography className={classes.task_titleText} variant="h6">
+                {task.title}
+              </Typography>
               {dateFieldContent}
               {categoryFieldContent}
             </div>

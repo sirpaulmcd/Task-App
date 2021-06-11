@@ -17,6 +17,34 @@ const useTaskListStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  taskList_fabContainer: {
+    position: "fixed",
+    right: "75px",
+    bottom: "75px",
+    [theme.breakpoints.up("sm")]: {
+      display: "None",
+    },
+  },
+  taskList_floatingActionButton: {
+    position: "absolute",
+  },
+  taskList_taskContainer: {
+    marginBottom: "50px",
+  },
+  taskList_newTaskButton: {
+    marginTop: "15px",
+    [theme.breakpoints.down("xs")]: {
+      display: "none",
+    },
+  },
+  taskList_noTasksContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  taskList_noTasksText: {
+    marginTop: "125px",
+  },
 }));
 
 export default useTaskListStyles;

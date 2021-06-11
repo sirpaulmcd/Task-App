@@ -4,14 +4,16 @@ import { useParams } from "react-router";
 
 import {
   Backdrop,
+  Button,
   Container,
   Fab,
   Fade,
   Modal,
   Paper,
-  Typography,
+  Typography
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
+import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 
 import Task from "./Task";
 import TaskForm from "./TaskForm";
@@ -118,7 +120,15 @@ const TaskList: React.FC<TaskListProps> = () => {
 
   const tasksContent = (
     <>
-      <Container maxWidth="sm">
+      <Container className={classes.taskList_taskContainer} maxWidth="sm">
+        <Button
+          className={classes.taskList_newTaskButton}
+          variant="outlined"
+          fullWidth
+          onClick={handleNewTaskModalOpen}
+        >
+          Create new task
+        </Button>
         <ul className={classes.taskList_unorderedList}>
           {tasks.map((task: any) => {
             if (taskShouldRender(task)) {
@@ -135,7 +145,25 @@ const TaskList: React.FC<TaskListProps> = () => {
 
   const noTasksContent = (
     <>
-      <Typography>No tasks.</Typography>
+      <Container className={classes.taskList_noTasksContainer} maxWidth="sm">
+        <Typography
+          className={classes.taskList_noTasksText}
+          align="center"
+          variant="h3"
+        >
+          <AssignmentTurnedInIcon fontSize="inherit" />
+          <br />
+          No Tasks
+        </Typography>
+        <Button
+          className={classes.taskList_newTaskButton}
+          variant="outlined"
+          size="large"
+          onClick={handleNewTaskModalOpen}
+        >
+          Create new task
+        </Button>
+      </Container>
     </>
   );
   //#endregion
@@ -145,9 +173,16 @@ const TaskList: React.FC<TaskListProps> = () => {
     <>
       {newTaskModalContent}
       {tasks.length === 0 ? noTasksContent : tasksContent}
-      <Fab color="primary" aria-label="add" onClick={handleNewTaskModalOpen}>
-        <AddIcon />
-      </Fab>
+      <div className={classes.taskList_fabContainer}>
+        <Fab
+          className={classes.taskList_floatingActionButton}
+          color="primary"
+          aria-label="create new task"
+          onClick={handleNewTaskModalOpen}
+        >
+          <AddIcon />
+        </Fab>
+      </div>
     </>
   );
   //#endregion
