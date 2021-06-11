@@ -30,7 +30,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "prettier --write **/*.{ts,tsx}",
+    "format": "prettier --check **/*.{ts,tsx}",
+    "formatWrite": "prettier --write **/*.{ts,tsx}",
     "lint": "eslint . --ext .ts --ext .tsx"
   },
   "eslintConfig": {

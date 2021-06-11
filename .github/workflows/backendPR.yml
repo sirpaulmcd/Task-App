@@ -1,0 +1,45 @@
+name: Continuous Integration - Backend
+
+on:
+  pull_request:
+    paths:
+      - backend/**
+    branches:
+      - dev
+      - main
+
+jobs:
+  quality_assurance:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Create environment
+        run: |
+          sudo apt update -y
+          sudo apt install nodejs npm
+          cd backend
+          npm ci
+
+      - name: Check formatting
+        if: ${{ always() }}
+        run: |
+          cd backend
+          npm run format
+
+      - name: Check linting
+        if: ${{ always() }}
+        run: |
+          cd backend
+          npm run lint
+
+      - name: Run tests
+        if: ${{ always() }}
+        run: |
+          cd backend
+          npm run test
