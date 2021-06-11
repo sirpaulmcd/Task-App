@@ -11,6 +11,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
       <PageLayout>
         <Typography variant="h3">Task App</Typography>
         <Typography variant="body1">Fancy landing page content
+           
         </Typography>
       </PageLayout>
     </>
