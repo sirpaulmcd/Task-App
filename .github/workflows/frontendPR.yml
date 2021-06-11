@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  Quality Assurance:
+  Quality_Assurance:
     runs-on: ubuntu-latest
     continue-on-error: true
 
