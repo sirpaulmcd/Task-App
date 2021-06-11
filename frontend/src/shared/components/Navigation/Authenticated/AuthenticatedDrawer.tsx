@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import {
   Divider,
   Drawer,
   List,
   ListItem,
-  ListItemText,
+  ListItemText
 } from "@material-ui/core";
 
 import useAuthenticatedDrawerStyles from "./AuthenticatedDrawerStyles";
@@ -25,19 +25,53 @@ export const AuthenticatedDrawer: React.FC<AuthenticatedDrawerProps> = ({
   const classes = useAuthenticatedDrawerStyles();
   //#endregion
 
+  //#region Routing -----------------------------------------------------------
+  const location = useLocation();
+  //#endregion
+
+  //#region Tasks button ------------------------------------------------------
+  let tasksButtonContent = null;
+  if (location.pathname === "/settings") {
+    tasksButtonContent = (
+      <>
+        <ListItem
+          button
+          component={Link}
+          to={"/"}
+          onClick={toggleDrawerHandler}
+        >
+          <ListItemText primary="Tasks" />
+        </ListItem>
+      </>
+    );
+  }
+  //#endregion
+
+  //#region Settings button ---------------------------------------------------
+  let settingsButtonContent = null;
+  if (location.pathname !== "/settings") {
+    settingsButtonContent = (
+      <>
+        <ListItem
+          button
+          component={Link}
+          to={"/settings"}
+          onClick={toggleDrawerHandler}
+        >
+          <ListItemText primary="Settings" />
+        </ListItem>
+      </>
+    );
+  }
+  //#endregion
+
   //#region TSX ---------------------------------------------------------------
   return ReactDOM.createPortal(
     <>
       <Drawer anchor="right" open={open} onClose={toggleDrawerHandler}>
         <List className={classes.authenticatedDrawer_list}>
-          <ListItem
-            button
-            component={Link}
-            to={"/settings"}
-            onClick={toggleDrawerHandler}
-          >
-            <ListItemText primary="Settings" />
-          </ListItem>
+          {tasksButtonContent}
+          {settingsButtonContent}
         </List>
         <Divider />
         <List>
