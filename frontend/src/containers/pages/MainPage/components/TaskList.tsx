@@ -10,7 +10,7 @@ import {
   Fade,
   Modal,
   Paper,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
