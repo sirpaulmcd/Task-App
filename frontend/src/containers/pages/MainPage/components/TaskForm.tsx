@@ -9,12 +9,12 @@ import {
   MenuItem,
   Select,
   TextField,
-  Typography
+  Typography,
 } from "@material-ui/core";
 import {
   KeyboardDatePicker,
   KeyboardTimePicker,
-  MuiPickersUtilsProvider
+  MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 
 import { useUserContext } from "../../../../shared/contexts/UserContext";
@@ -22,7 +22,7 @@ import { useForm } from "../../../../shared/hooks/useForm";
 import {
   VALIDATOR_ISODATE,
   VALIDATOR_MAXLENGTH,
-  VALIDATOR_REQUIRE
+  VALIDATOR_REQUIRE,
 } from "../../../../shared/utils/FormValidator";
 import useNewTaskFormStyles from "./TaskFormStyles";
 

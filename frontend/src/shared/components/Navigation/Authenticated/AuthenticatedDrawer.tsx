@@ -7,7 +7,7 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 
 import useAuthenticatedDrawerStyles from "./AuthenticatedDrawerStyles";
