@@ -37,9 +37,3 @@ jobs:
         run: |
           cd backend
           npm run lint
-
-      - name: Run tests
-        if: ${{ always() }}
-        run: |
-          cd backend
-          npm run test
