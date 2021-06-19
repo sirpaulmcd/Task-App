@@ -8,8 +8,8 @@ RUN mkdir /home/node/backend
 # Change working directory
 WORKDIR /home/node/backend
 # Copy over and change ownership to package.json to run npm install
-COPY --chown=node:node package-lock.json package.json ./
-# Like `npm i` but for automated environments
-RUN npm ci
+COPY --chown=node:node package*.json ./
+# Install dependencies
+RUN npm install
 # Run backend api in dev mode
 CMD ["npm", "run", "dev"]

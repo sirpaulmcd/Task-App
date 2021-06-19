@@ -8,8 +8,8 @@ RUN mkdir /home/node/frontend
 # Change working directory
 WORKDIR /home/node/frontend
 # Copy over and change ownership to package.json to run npm install
-COPY --chown=node:node package-lock.json package.json ./
-# Like `npm i` but for automated environments
-RUN npm ci
+COPY --chown=node:node package*.json ./
+# Install dependencies
+RUN npm install
 # Run frontend app
 CMD ["npm", "start"]
