@@ -53,7 +53,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
       category: formState.inputs.category.value,
     };
     await axios
-      .post("http://localhost:8000/tasks", newTask)
+      .post(`${process.env.REACT_APP_BACKEND_URI}/tasks`, newTask)
       .then(async (res) => {
         if (res.status === 201 && getUserTasks) {
           await getUserTasks();
@@ -74,7 +74,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
       category: formState.inputs.category.value,
     };
     await axios
-      .patch(`http://localhost:8000/tasks/${task._id}`, updatedTask)
+      .patch(
+        `${process.env.REACT_APP_BACKEND_URI}/tasks/${task._id}`,
+        updatedTask
+      )
       .then(async (res) => {
         if (res.status === 200 && getUserTasks) {
           getUserTasks();

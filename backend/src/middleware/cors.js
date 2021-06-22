@@ -2,7 +2,7 @@ const cors = require("cors");
 
 // Solves cors errors and enables cookies sent from browsers
 var corsOptions = {
-  origin: "http://localhost:3000",
+  origin: `${process.env.FRONTEND_URI}`,
   optionsSuccessStatus: 200,
   credentials: true,
 };

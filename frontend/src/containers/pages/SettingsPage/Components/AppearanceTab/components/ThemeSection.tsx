@@ -32,7 +32,7 @@ export const ThemeSection: React.FC<ThemeSectionProps> = () => {
   //#region Update user mutation ----------------------------------------------
   const updateUserMutation = async (event: any) => {
     await axios
-      .patch("http://localhost:8000/users/me", {
+      .patch(`${process.env.REACT_APP_BACKEND_URI}/users/me`, {
         theme: event.target.value,
       })
       .then((res) => {

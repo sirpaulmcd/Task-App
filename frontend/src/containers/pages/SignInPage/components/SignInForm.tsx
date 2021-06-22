@@ -77,7 +77,7 @@ const SignInForm: React.FC<SignInFormProps> = () => {
       password: formState.inputs.password.value,
     };
     await axios
-      .post("http://localhost:8000/users/login", loginUserObject)
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users/login`, loginUserObject)
       .then((res) => {
         auth.login(res.data.accessToken);
       })

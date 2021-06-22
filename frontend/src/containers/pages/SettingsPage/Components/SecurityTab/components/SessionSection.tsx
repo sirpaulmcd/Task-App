@@ -16,7 +16,7 @@ export const SessionSection: React.FC<SessionSectionProps> = () => {
   //#region Logout all sessions mutation --------------------------------------
   const logoutAllSessionsMutation = async () => {
     await axios
-      .post("http://localhost:8000/users/logoutAll")
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users/logoutAll`)
       .then((res) => {
         setLogoutAllSessionsSuccess(true);
       })

@@ -92,7 +92,7 @@ class UserService {
       user.verifiedEmail = true;
       await user.save();
       // TODO: Redirect to desired frontend page
-      res.redirect("http://localhost:3000");
+      res.redirect(`${process.env.FRONTEND_URI}`);
     } catch (error) {
       res.status(401).send();
     }

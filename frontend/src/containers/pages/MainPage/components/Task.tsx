@@ -34,7 +34,7 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   //#region Update task completion status mutation ----------------------------
   const toggleTaskCompletionMutation = async (taskId: string) => {
     await axios
-      .patch(`http://localhost:8000/tasks/${taskId}`, {
+      .patch(`${process.env.REACT_APP_BACKEND_URI}/tasks/${taskId}`, {
         completed: !task.completed,
       })
       .then(async (res) => {
@@ -51,7 +51,7 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   //#region Delete task mutation ----------------------------------------------
   const deleteTaskMutation = async () => {
     await axios
-      .delete(`http://localhost:8000/tasks/${task._id}`)
+      .delete(`${process.env.REACT_APP_BACKEND_URI}/tasks/${task._id}`)
       .then(async (res) => {
         if (res.status === 200 && getUserTasks) {
           await getUserTasks();

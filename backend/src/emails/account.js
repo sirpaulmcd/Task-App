@@ -10,7 +10,7 @@ const sendVerificationEmail = async (user) => {
     process.env.VERIFY_EMAIL_TOKEN_SECRET,
     "1 day"
   );
-  const url = `http://localhost:8000/verification/${verifyEmailToken}`;
+  const url = `${process.env.BACKEND_URI}/verification/${verifyEmailToken}`;
   sgMail.send({
     to: user.email,
     from: "sirpaulmcd@tutanota.com",
@@ -25,7 +25,7 @@ const sendForgotPasswordEmail = async (user) => {
     process.env.FORGOT_PASSWORD_TOKEN_SECRET,
     "15 minutes"
   );
-  const url = `http://localhost:8000/verification/${forgotPasswordToken}`;
+  const url = `${process.env.BACKEND_URI}/verification/${forgotPasswordToken}`;
   sgMail.send({
     to: user.email,
     from: "sirpaulmcd@tutanota.com",

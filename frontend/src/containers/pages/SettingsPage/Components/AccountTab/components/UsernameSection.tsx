@@ -87,7 +87,7 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
   //#region Update user mutation ----------------------------------------------
   const updateUserMutation = async () => {
     await axios
-      .patch("http://localhost:8000/users/me", {
+      .patch(`${process.env.REACT_APP_BACKEND_URI}/users/me`, {
         username: formState.inputs.username.value,
       })
       .then((res) => {
@@ -102,7 +102,7 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
   //#region Unique username query ---------------------------------------------
   const checkUniqueFieldQuery = useCallback(async () => {
     await axios
-      .post("http://localhost:8000/users/unique", {
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users/unique`, {
         username: formState.inputs.username.value,
       })
       .catch((error) => {

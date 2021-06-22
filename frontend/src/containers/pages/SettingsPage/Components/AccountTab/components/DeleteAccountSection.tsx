@@ -23,7 +23,7 @@ export const DeleteAccountSection: React.FC<SessionSectionProps> = () => {
   //#region Delete account mutation -------------------------------------------
   const deleteAccountMutation = async () => {
     await axios
-      .delete("http://localhost:8000/users/me")
+      .delete(`${process.env.REACT_APP_BACKEND_URI}/users/me`)
       .then((res) => {
         window.location.reload();
       })

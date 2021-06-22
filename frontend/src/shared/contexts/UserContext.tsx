@@ -35,7 +35,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
    */
   const getMeQuery = useCallback(async () => {
     await axios
-      .get("http://localhost:8000/users/me")
+      .get(`${process.env.REACT_APP_BACKEND_URI}/users/me`)
       .then((res) => {
         setUser(res.data);
       })

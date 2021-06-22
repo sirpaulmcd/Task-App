@@ -101,7 +101,7 @@ export const PasswordSection: React.FC<PasswordSectionProps> = () => {
   //#region Update password mutation ------------------------------------------
   const updatePasswordMutation = async () => {
     await axios
-      .post("http://localhost:8000/users/me/password", {
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users/me/password`, {
         oldPassword: formState.inputs.oldPassword.value,
         newPassword: formState.inputs.newPassword.value,
       })

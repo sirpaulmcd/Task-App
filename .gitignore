@@ -6,7 +6,7 @@ build/
 
 # secrets (remove exceptions when in production) 
 *.env*
-!frontend/.env
+!frontend/config/.env
 !backend/config/.env
 !backend/config/test.env
 

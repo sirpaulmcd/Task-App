@@ -64,7 +64,7 @@ export const AccessTokenContextProvider = ({
    */
   const logout = useCallback(async () => {
     await axios
-      .post("http://localhost:8000/users/logout", {})
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users/logout`, {})
       .catch((error) => {
         console.log(error);
       });
@@ -82,7 +82,7 @@ export const AccessTokenContextProvider = ({
   const renewTokensMutation = useCallback(async () => {
     setLoading(true);
     await axios
-      .post("http://localhost:8000/users/refresh")
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users/refresh`)
       .then((res) => {
         if (res.status === 200) {
           login(res.data.accessToken);

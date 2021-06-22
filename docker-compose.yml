@@ -9,6 +9,9 @@ services:
       - ./frontend:/home/node/frontend
       - /home/node/frontend/node_modules
     env_file: ./frontend/config/.env
+    environment:
+      - REACT_APP_FRONTEND_URI=${FRONTEND_URI}
+      - REACT_APP_BACKEND_URI=${BACKEND_URI}
   backend:
     # Path to service Dockerfile
     build: ./backend
@@ -23,6 +26,11 @@ services:
       # Ensures database starts up before backend starts
       - db
     env_file: ./backend/config/.env
+    environment:
+      - FRONTEND_URI=${FRONTEND_URI}
+      - BACKEND_URI=${BACKEND_URI}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - DB_PORT=${DB_PORT}
   db:
     image: ${DB_IMAGE}
     ports:

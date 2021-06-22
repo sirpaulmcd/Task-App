@@ -83,7 +83,7 @@ export const PublicProfileSection: React.FC<PublicProfileSectionProps> = () => {
   //#region Update user mutation ----------------------------------------------
   const updateUserMutation = async () => {
     await axios
-      .patch("http://localhost:8000/users/me", {
+      .patch(`${process.env.REACT_APP_BACKEND_URI}/users/me`, {
         name: formState.inputs.fullName.value,
       })
       .then((res) => {

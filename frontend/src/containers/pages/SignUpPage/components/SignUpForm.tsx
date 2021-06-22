@@ -45,7 +45,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
       password: formState.inputs.password.value,
     };
     await axios
-      .post("http://localhost:8000/users", newUser)
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users`, newUser)
       .then((res) => {
         auth.login(res.data.accessToken);
       })
