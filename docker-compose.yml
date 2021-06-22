@@ -31,6 +31,7 @@ services:
       - BACKEND_URI=${BACKEND_URI}
       - BACKEND_PORT=${BACKEND_PORT}
       - DB_PORT=${DB_PORT}
+      - PRODUCTION=${PRODUCTION}
   db:
     image: ${DB_IMAGE}
     ports:

@@ -19,8 +19,8 @@ app.use(cors);
 
 //#region Routers =============================================================
 
-app.use(taskRouter);
-app.use(userRouter);
+app.use("/api/", taskRouter);
+app.use("/api/", userRouter);
 
 //#endregion
 

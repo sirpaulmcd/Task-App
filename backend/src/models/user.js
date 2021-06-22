@@ -237,13 +237,13 @@ userSchema.statics.writeRefreshCookies = (res, refreshToken) => {
     res,
     "refresh_jwt",
     refreshToken,
-    "/users/refresh"
+    "/api/users/refresh"
   );
   appendTokenToResponseAsCookie(
     res,
     "logout_jwt",
     refreshToken,
-    "/users/logout"
+    "/api/users/logout"
   );
 };
 
