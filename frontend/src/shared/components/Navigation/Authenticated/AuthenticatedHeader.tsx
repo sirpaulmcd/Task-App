@@ -149,7 +149,11 @@ export const AuthenticatedHeader: React.FC<AuthenticatedHeaderProps> = ({
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <MenuItem component={Link} to={"/settings"}>
+        <MenuItem
+          component={Link}
+          to={"/settings"}
+          onClick={closeAvatarMenuHandler}
+        >
           My Account
         </MenuItem>
         <MenuItem onClick={auth.logout}>Sign out</MenuItem>

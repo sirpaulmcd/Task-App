@@ -35,7 +35,7 @@ const TaskList: React.FC<TaskListProps> = () => {
   //#endregion
 
   //#region Get user tasks query ----------------------------------------------
-  let taskUrl = `${process.env.REACT_APP_BACKEND_URI}/tasks?sortBy=dueDateTime:asc`;
+  let taskUrl = `${process.env.REACT_APP_BACKEND_URI}/tasks?sortBy=dueDateTime:desc`;
   if (params.taskList) {
     if (params.taskList === "Finished") {
       taskUrl += "&completed=true";
