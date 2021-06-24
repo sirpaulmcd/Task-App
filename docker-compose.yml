@@ -17,6 +17,7 @@ services:
     env_file: ./frontend/config/.env
     environment:
       - REACT_APP_FRONTEND_URI=${FRONTEND_URI}
+      - REACT_APP_FRONTEND_PORT=${FRONTEND_PORT}
       - REACT_APP_BACKEND_URI=${BACKEND_URI}
       - REACT_APP_NODE_ENV=${NODE_ENV}
     command: ${FRONTEND_COMMAND}
