@@ -2,28 +2,36 @@ version: "3"
 
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV}
     ports:
       - ${FRONTEND_PORT}:${FRONTEND_PORT}
     volumes:
       - ./frontend:/home/node/frontend
       - /home/node/frontend/node_modules
+    depends_on:
+      - backend
     env_file: ./frontend/config/.env
     environment:
       - REACT_APP_FRONTEND_URI=${FRONTEND_URI}
       - REACT_APP_BACKEND_URI=${BACKEND_URI}
+      - REACT_APP_NODE_ENV=${NODE_ENV}
+    command: ${FRONTEND_COMMAND}
   backend:
-    # Path to service Dockerfile
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV}
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     volumes:
       - ./backend:/home/node/backend
-      # Prevents node modules from being used in bind mount
-      #   needs to use linux native node modules (not host's)
       - /home/node/backend/node_modules
-    links:
-      # Ensures database starts up before backend starts
+    depends_on:
       - db
     env_file: ./backend/config/.env
     environment:
@@ -31,7 +39,8 @@ services:
       - BACKEND_URI=${BACKEND_URI}
       - BACKEND_PORT=${BACKEND_PORT}
       - DB_PORT=${DB_PORT}
-      - PRODUCTION=${PRODUCTION}
+      - NODE_ENV=${NODE_ENV}
+    command: ${BACKEND_COMMAND}
   db:
     image: ${DB_IMAGE}
     ports:
