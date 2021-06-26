@@ -147,51 +147,53 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
       <Typography className={classes.usernameSection_title} variant="h5">
         Change username
       </Typography>
-      <form
-        className={classes.usernameSection_formContainer}
-        noValidate
-        autoComplete="off"
-        onSubmit={submitHandler}
-      >
-        <Typography
-          className={classes.usernameSection_formLabel}
-          variant="caption"
+      <div className={classes.usernameSection_formContainer}>
+        <form
+          className={classes.usernameSection_leftContainer}
+          noValidate
+          autoComplete="off"
+          onSubmit={submitHandler}
         >
-          Username
-        </Typography>
-        <TextField
-          id="username"
-          className={classes.usernameSection_formItem}
-          inputRef={usernameRef}
-          variant="outlined"
-          fullWidth
-          value={formState.inputs.username.value}
-          onChange={inputHandler}
-          onBlur={formBlurHandler}
-          error={
-            formState.inputs.username.isUsed &&
-            !formState.inputs.username.isValid
-          }
-          helperText={
-            formState.inputs.username.errorMessage &&
-            formState.inputs.username.isUsed
-              ? formState.inputs.username.errorMessage
-              : formState.inputs.username.helperText
-          }
-        />
-        <div className={classes.usernameSection_buttonContainer}>
-          <Button
-            className={`${classes.usernameSection_submitButton} ${classes.usernameSection_formItem}`}
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={submitHandler}
+          <Typography
+            className={classes.usernameSection_formLabel}
+            variant="caption"
           >
-            Update username
-          </Button>
-          {usernameUpdateSuccess ? <DoneIcon /> : null}
-        </div>
-      </form>
+            Username
+          </Typography>
+          <TextField
+            id="username"
+            className={classes.usernameSection_formItem}
+            inputRef={usernameRef}
+            variant="outlined"
+            fullWidth
+            value={formState.inputs.username.value}
+            onChange={inputHandler}
+            onBlur={formBlurHandler}
+            error={
+              formState.inputs.username.isUsed &&
+              !formState.inputs.username.isValid
+            }
+            helperText={
+              formState.inputs.username.errorMessage &&
+              formState.inputs.username.isUsed
+                ? formState.inputs.username.errorMessage
+                : formState.inputs.username.helperText
+            }
+          />
+          <div className={classes.usernameSection_buttonContainer}>
+            <Button
+              className={`${classes.usernameSection_submitButton} ${classes.usernameSection_formItem}`}
+              variant="contained"
+              color="primary"
+              onClick={submitHandler}
+            >
+              Update username
+            </Button>
+            {usernameUpdateSuccess ? <DoneIcon /> : null}
+          </div>
+        </form>
+        <div className={classes.usernameSection_rightContainer}></div>
+      </div>
     </>
   );
   //#endregion

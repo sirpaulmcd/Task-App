@@ -135,49 +135,52 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
       <Typography className={classes.emailSection_title} variant="h5">
         Change email
       </Typography>
-      <form
-        className={classes.emailSection_formContainer}
-        noValidate
-        autoComplete="off"
-        onSubmit={submitHandler}
-      >
-        <Typography
-          className={classes.emailSection_formLabel}
-          variant="caption"
+      <div className={classes.emailSection_formContainer}>
+        <form
+          className={classes.emailSection_leftContainer}
+          noValidate
+          autoComplete="off"
+          onSubmit={submitHandler}
         >
-          Email
-        </Typography>
-        <TextField
-          id="email"
-          className={classes.emailSection_formItem}
-          inputRef={emailRef}
-          variant="outlined"
-          fullWidth
-          value={formState.inputs.email.value}
-          onChange={inputHandler}
-          onBlur={formBlurHandler}
-          error={
-            formState.inputs.email.isUsed && !formState.inputs.email.isValid
-          }
-          helperText={
-            formState.inputs.email.errorMessage && formState.inputs.email.isUsed
-              ? formState.inputs.email.errorMessage
-              : formState.inputs.email.helperText
-          }
-        />
-        <div className={classes.emailSection_buttonContainer}>
-          <Button
-            className={`${classes.emailSection_submitButton} ${classes.emailSection_formItem}`}
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={submitHandler}
+          <Typography
+            className={classes.emailSection_formLabel}
+            variant="caption"
           >
-            Update email
-          </Button>
-          {emailUpdateSuccess ? <DoneIcon /> : null}
-        </div>
-      </form>
+            Email
+          </Typography>
+          <TextField
+            id="email"
+            className={classes.emailSection_formItem}
+            inputRef={emailRef}
+            variant="outlined"
+            fullWidth
+            value={formState.inputs.email.value}
+            onChange={inputHandler}
+            onBlur={formBlurHandler}
+            error={
+              formState.inputs.email.isUsed && !formState.inputs.email.isValid
+            }
+            helperText={
+              formState.inputs.email.errorMessage &&
+              formState.inputs.email.isUsed
+                ? formState.inputs.email.errorMessage
+                : formState.inputs.email.helperText
+            }
+          />
+          <div className={classes.emailSection_buttonContainer}>
+            <Button
+              className={`${classes.emailSection_submitButton} ${classes.emailSection_formItem}`}
+              variant="contained"
+              color="primary"
+              onClick={submitHandler}
+            >
+              Update email
+            </Button>
+            {emailUpdateSuccess ? <DoneIcon /> : null}
+          </div>
+        </form>
+        <div className={classes.emailSection_rightContainer}></div>
+      </div>
     </>
   );
   //#endregion

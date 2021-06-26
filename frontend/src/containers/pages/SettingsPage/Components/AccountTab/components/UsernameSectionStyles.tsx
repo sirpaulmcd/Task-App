@@ -4,11 +4,22 @@ import { makeStyles } from "@material-ui/core/styles";
 const useUsernameSectionStyles = makeStyles((theme) => ({
   usernameSection_formContainer: {
     display: "flex",
+    flexDirection: "row",
+  },
+  usernameSection_leftContainer: {
+    display: "flex",
     flexDirection: "column",
+    flexGrow: 1,
+  },
+  usernameSection_rightContainer: {
+    display: "flex",
+    flexGrow: 2,
+    [theme.breakpoints.down("xs")]: {
+      display: "none",
+    },
   },
   usernameSection_formItem: {
     marginTop: theme.spacing(0),
-    width: "fit-content",
   },
   usernameSection_formLabel: {
     fontWeight: "bold",

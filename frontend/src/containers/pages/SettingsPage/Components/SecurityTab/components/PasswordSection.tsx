@@ -96,6 +96,7 @@ export const PasswordSection: React.FC<PasswordSectionProps> = () => {
       await updatePasswordMutation();
     }
   };
+
   //#endregion
 
   //#region Update password mutation ------------------------------------------
@@ -109,7 +110,11 @@ export const PasswordSection: React.FC<PasswordSectionProps> = () => {
         setPasswordUpdateSuccess(true);
       })
       .catch((error) => {
-        console.log(error);
+        formDispatch({
+          type: "INVALIDATE",
+          errorMessage: "Old password incorrect.",
+          input: "oldPassword",
+        });
       });
   };
   //#endregion
@@ -120,103 +125,105 @@ export const PasswordSection: React.FC<PasswordSectionProps> = () => {
       <Typography className={classes.passwordSection_title} variant="h5">
         Change Password
       </Typography>
-      <form
-        className={classes.passwordSection_formContainer}
-        noValidate
-        autoComplete="off"
-        onSubmit={submitHandler}
-      >
-        <Typography
-          className={classes.passwordSection_formLabel}
-          variant="caption"
+      <div className={classes.passwordSection_formContainer}>
+        <form
+          className={classes.passwordSection_leftContainer}
+          noValidate
+          autoComplete="off"
+          onSubmit={submitHandler}
         >
-          Old password
-        </Typography>
-        <TextField
-          id="oldPassword"
-          className={classes.passwordSection_formItem}
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={formState.inputs.oldPassword.value}
-          onChange={formInputHandler}
-          onBlur={formBlurHandler}
-          error={
-            formState.inputs.oldPassword.isUsed &&
-            !formState.inputs.oldPassword.isValid
-          }
-          helperText={
-            formState.inputs.oldPassword.errorMessage &&
-            formState.inputs.oldPassword.isUsed
-              ? formState.inputs.oldPassword.errorMessage
-              : formState.inputs.oldPassword.helperText
-          }
-        />
-        <Typography
-          className={classes.passwordSection_formLabel}
-          variant="caption"
-        >
-          New password
-        </Typography>
-        <TextField
-          id="newPassword"
-          className={classes.passwordSection_formItem}
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={formState.inputs.newPassword.value}
-          onChange={formInputHandler}
-          onBlur={formBlurHandler}
-          error={
-            formState.inputs.newPassword.isUsed &&
-            !formState.inputs.newPassword.isValid
-          }
-          helperText={
-            formState.inputs.newPassword.errorMessage &&
-            formState.inputs.newPassword.isUsed
-              ? formState.inputs.newPassword.errorMessage
-              : formState.inputs.newPassword.helperText
-          }
-        />
-        <Typography
-          className={classes.passwordSection_formLabel}
-          variant="caption"
-        >
-          Confirm new password
-        </Typography>
-        <TextField
-          id="confirmNewPassword"
-          className={classes.passwordSection_formItem}
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={formState.inputs.confirmNewPassword.value}
-          onChange={formInputHandler}
-          onBlur={formBlurHandler}
-          error={
-            formState.inputs.confirmNewPassword.isUsed &&
-            !formState.inputs.confirmNewPassword.isValid
-          }
-          helperText={
-            formState.inputs.confirmNewPassword.errorMessage &&
-            formState.inputs.confirmNewPassword.isUsed
-              ? formState.inputs.confirmNewPassword.errorMessage
-              : formState.inputs.confirmNewPassword.helperText
-          }
-        />
-        <div className={classes.passwordSection_buttonContainer}>
-          <Button
-            className={`${classes.passwordSection_submitButton} ${classes.passwordSection_formItem}`}
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={submitHandler}
+          <Typography
+            className={classes.passwordSection_formLabel}
+            variant="caption"
           >
-            Update password
-          </Button>
-          {passwordUpdateSuccess ? <DoneIcon /> : null}
-        </div>
-      </form>
+            Old password
+          </Typography>
+          <TextField
+            id="oldPassword"
+            className={classes.passwordSection_formItem}
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={formState.inputs.oldPassword.value}
+            onChange={formInputHandler}
+            onBlur={formBlurHandler}
+            error={
+              formState.inputs.oldPassword.isUsed &&
+              !formState.inputs.oldPassword.isValid
+            }
+            helperText={
+              formState.inputs.oldPassword.errorMessage &&
+              formState.inputs.oldPassword.isUsed
+                ? formState.inputs.oldPassword.errorMessage
+                : formState.inputs.oldPassword.helperText
+            }
+          />
+          <Typography
+            className={classes.passwordSection_formLabel}
+            variant="caption"
+          >
+            New password
+          </Typography>
+          <TextField
+            id="newPassword"
+            className={classes.passwordSection_formItem}
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={formState.inputs.newPassword.value}
+            onChange={formInputHandler}
+            onBlur={formBlurHandler}
+            error={
+              formState.inputs.newPassword.isUsed &&
+              !formState.inputs.newPassword.isValid
+            }
+            helperText={
+              formState.inputs.newPassword.errorMessage &&
+              formState.inputs.newPassword.isUsed
+                ? formState.inputs.newPassword.errorMessage
+                : formState.inputs.newPassword.helperText
+            }
+          />
+          <Typography
+            className={classes.passwordSection_formLabel}
+            variant="caption"
+          >
+            Confirm new password
+          </Typography>
+          <TextField
+            id="confirmNewPassword"
+            className={classes.passwordSection_formItem}
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={formState.inputs.confirmNewPassword.value}
+            onChange={formInputHandler}
+            onBlur={formBlurHandler}
+            error={
+              formState.inputs.confirmNewPassword.isUsed &&
+              !formState.inputs.confirmNewPassword.isValid
+            }
+            helperText={
+              formState.inputs.confirmNewPassword.errorMessage &&
+              formState.inputs.confirmNewPassword.isUsed
+                ? formState.inputs.confirmNewPassword.errorMessage
+                : formState.inputs.confirmNewPassword.helperText
+            }
+          />
+          <div className={classes.passwordSection_buttonContainer}>
+            <Button
+              className={`${classes.passwordSection_submitButton} ${classes.passwordSection_formItem}`}
+              variant="contained"
+              color="primary"
+              onClick={submitHandler}
+            >
+              Update password
+            </Button>
+            {passwordUpdateSuccess ? <DoneIcon /> : null}
+          </div>
+        </form>
+        <div className={classes.passwordSection_rightContainer}></div>
+      </div>
     </>
   );
   //#endregion

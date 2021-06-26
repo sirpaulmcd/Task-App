@@ -101,48 +101,51 @@ export const PublicProfileSection: React.FC<PublicProfileSectionProps> = () => {
       <Typography className={classes.publicProfileSection_title} variant="h5">
         Public profile
       </Typography>
-      <form
-        className={classes.publicProfileSection_formContainer}
-        noValidate
-        autoComplete="off"
-        onSubmit={submitHandler}
-      >
-        <Typography
-          className={classes.publicProfileSection_formLabel}
-          variant="caption"
+      <div className={classes.publicProfileSection_formContainer}>
+        <form
+          className={classes.publicProfileSection_leftContainer}
+          noValidate
+          autoComplete="off"
+          onSubmit={submitHandler}
         >
-          Full Name
-        </Typography>
-        <TextField
-          className={classes.publicProfileSection_formItem}
-          id="fullName"
-          variant="outlined"
-          value={formState.inputs.fullName.value}
-          onChange={inputHandler}
-          onBlur={formBlurHandler}
-          error={
-            formState.inputs.fullName.isUsed &&
-            !formState.inputs.fullName.isValid
-          }
-          helperText={
-            formState.inputs.fullName.errorMessage &&
-            formState.inputs.fullName.isUsed
-              ? formState.inputs.fullName.errorMessage
-              : formState.inputs.fullName.helperText
-          }
-        />
-        <div className={classes.publicProfileSection_buttonContainer}>
-          <Button
-            className={`${classes.publicProfileSection_submitButton} ${classes.publicProfileSection_formItem}`}
-            variant="contained"
-            color="primary"
-            onClick={submitHandler}
+          <Typography
+            className={classes.publicProfileSection_formLabel}
+            variant="caption"
           >
-            Update Profile
-          </Button>
-          {profileUpdateSuccess ? <DoneIcon /> : null}
-        </div>
-      </form>
+            Full Name
+          </Typography>
+          <TextField
+            className={classes.publicProfileSection_formItem}
+            id="fullName"
+            variant="outlined"
+            value={formState.inputs.fullName.value}
+            onChange={inputHandler}
+            onBlur={formBlurHandler}
+            error={
+              formState.inputs.fullName.isUsed &&
+              !formState.inputs.fullName.isValid
+            }
+            helperText={
+              formState.inputs.fullName.errorMessage &&
+              formState.inputs.fullName.isUsed
+                ? formState.inputs.fullName.errorMessage
+                : formState.inputs.fullName.helperText
+            }
+          />
+          <div className={classes.publicProfileSection_buttonContainer}>
+            <Button
+              className={`${classes.publicProfileSection_submitButton} ${classes.publicProfileSection_formItem}`}
+              variant="contained"
+              color="primary"
+              onClick={submitHandler}
+            >
+              Update Profile
+            </Button>
+            {profileUpdateSuccess ? <DoneIcon /> : null}
+          </div>
+        </form>
+        <div className={classes.publicProfileSection_rightContainer}></div>
+      </div>
     </>
   );
   //#endregion

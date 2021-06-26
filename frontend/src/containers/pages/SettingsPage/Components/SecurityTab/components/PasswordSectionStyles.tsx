@@ -4,11 +4,22 @@ import { makeStyles } from "@material-ui/core/styles";
 const usePasswordSectionStyles = makeStyles((theme) => ({
   passwordSection_formContainer: {
     display: "flex",
+    flexDirection: "row",
+  },
+  passwordSection_leftContainer: {
+    display: "flex",
     flexDirection: "column",
+    flexGrow: 1,
+  },
+  passwordSection_rightContainer: {
+    display: "flex",
+    flexGrow: 2,
+    [theme.breakpoints.down("xs")]: {
+      display: "none",
+    },
   },
   passwordSection_formItem: {
     marginTop: theme.spacing(0),
-    width: "fit-content",
   },
   passwordSection_formLabel: {
     fontWeight: "bold",
