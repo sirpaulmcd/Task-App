@@ -25,7 +25,14 @@ class UserService {
       const accessToken = await user.generateTokens(res);
       res.status(201).send({ user, accessToken });
     } catch (error) {
-      res.status(400).send(error);
+      let errorMessage = "";
+      if ("email" in error.errors) {
+        errorMessage += "Email already taken. ";
+      }
+      if ("username" in error.errors) {
+        errorMessage += "Username already taken. ";
+      }
+      res.status(400).send({ error: errorMessage });
     }
   };
 

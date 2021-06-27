@@ -48,9 +48,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
       .post(`${process.env.REACT_APP_BACKEND_URI}/users`, newUser)
       .then((res) => {
         auth.login(res.data.accessToken);
+        history.push("/");
       })
       .catch((error) => {
-        console.log(error);
+        invalidateForm(error);
       });
   };
   //#endregion
@@ -114,24 +115,19 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
   const submitHandler = async (e: any) => {
     e.preventDefault();
     if (formState.isValid) {
-      try {
-        await registerUserMutation();
-        history.push("/");
-      } catch (error) {
-        invalidateForm(error);
-      }
+      await registerUserMutation();
     }
   };
 
   const invalidateForm = (error: any) => {
-    if (error.message.toLowerCase().includes("email")) {
+    if (error.response.data.error.toLowerCase().includes("email")) {
       formDispatch({
         type: "INVALIDATE",
         errorMessage: "Email is already taken.",
         input: "email",
       });
     }
-    if (error.message.toLowerCase().includes("username")) {
+    if (error.response.data.error.toLowerCase().includes("username")) {
       formDispatch({
         type: "INVALIDATE",
         errorMessage: `Username ${formState.inputs.username.value} is not available.`,
