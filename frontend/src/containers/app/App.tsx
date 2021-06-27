@@ -4,6 +4,7 @@ import { AppLayout } from "../../shared/components/Layout/AppLayout";
 import { useAccessTokenContext } from "../../shared/contexts/AccessTokenContext";
 import { useThemeContext } from "../../shared/contexts/ThemeContext";
 import LandingPage from "../pages/LandingPage/LandingPage";
+import LoadingPage from "../pages/LoadingPage/LoadingPage";
 import TaskPage from "../pages/MainPage/TaskPage";
 import { SettingsPage } from "../pages/SettingsPage/SettingsPage";
 import SignInPage from "../pages/SignInPage/SignInPage";
@@ -43,7 +44,13 @@ const App: React.FC<AppProps> = () => {
 
   //#region TSX ---------------------------------------------------------------
   if (auth.loading || themeContextLoading) {
-    return <div>loading...</div>;
+    return (
+      <>
+        <AppLayout>
+          <LoadingPage />
+        </AppLayout>
+      </>
+    );
   }
   return (
     <>
