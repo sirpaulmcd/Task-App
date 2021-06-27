@@ -51,21 +51,7 @@ const SignInForm: React.FC<SignInFormProps> = () => {
   const submitHandler = async (e: any) => {
     e.preventDefault();
     if (formState.isValid) {
-      try {
-        await loginUserMutation();
-        history.push("/");
-      } catch (error) {
-        formDispatch({
-          type: "INVALIDATE",
-          errorMessage: "Email and password combination is invalid.",
-          input: "email",
-        });
-        formDispatch({
-          type: "INVALIDATE",
-          errorMessage: "",
-          input: "password",
-        });
-      }
+      await loginUserMutation();
     }
   };
   //#endregion
@@ -80,9 +66,19 @@ const SignInForm: React.FC<SignInFormProps> = () => {
       .post(`${process.env.REACT_APP_BACKEND_URI}/users/login`, loginUserObject)
       .then((res) => {
         auth.login(res.data.accessToken);
+        history.push("/");
       })
       .catch((error) => {
-        console.log(error);
+        formDispatch({
+          type: "INVALIDATE",
+          errorMessage: "Email and password combination is invalid.",
+          input: "email",
+        });
+        formDispatch({
+          type: "INVALIDATE",
+          errorMessage: "",
+          input: "password",
+        });
       });
   };
   //#endregion

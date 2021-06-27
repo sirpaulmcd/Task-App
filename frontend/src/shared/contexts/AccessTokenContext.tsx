@@ -69,6 +69,7 @@ export const AccessTokenContextProvider = ({
         console.log(error);
       });
     setAccessToken("");
+    window.location.reload();
   }, []);
   //#endregion
 
