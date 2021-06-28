@@ -29,8 +29,8 @@
     "prod": "react-scripts build; node src/prodServer.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "format": "prettier --check **/*.{ts,tsx}",
-    "formatWrite": "prettier --write **/*.{ts,tsx}",
+    "format": "prettier --check **/*.{js,jsx,ts,tsx}",
+    "formatWrite": "prettier --write **/*.{js,jsx,ts,tsx}",
     "lint": "eslint . --ext .ts --ext .tsx"
   },
   "eslintConfig": {
