@@ -65,7 +65,13 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
   //#endregion
 
   //#region Basic form management ---------------------------------------------
-  const [formState, formDispatch, formInputHandler, formBlurHandler] = useForm(
+  const [
+    formState,
+    formDispatch,
+    formInputHandler,
+    formBlurHandler,
+    formSubmitHandler,
+  ] = useForm(
     {
       fullName: {
         value: "",
@@ -122,6 +128,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
 
   const submitHandler = async (e: any) => {
     e.preventDefault();
+    formSubmitHandler(e);
     if (formState.isValid) {
       await registerUserMutation();
     }
@@ -309,6 +316,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
         />
         <Button
           className={classes.signUpForm_submitButton}
+          type="submit"
           variant="contained"
           color="primary"
           fullWidth

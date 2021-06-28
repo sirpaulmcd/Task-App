@@ -226,105 +226,120 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
   //#region TSX ---------------------------------------------------------------
   return (
     <>
-      <Container className={classes.newTaskForm_formContainer} maxWidth="sm">
-        <Typography className={classes.newTaskForm_title} variant="h5">
-          {task ? "Update Task" : "New Task"}
-        </Typography>
-        <Typography className={classes.newTaskForm_formLabel} variant="caption">
-          Title *
-        </Typography>
-        <TextField
-          id="title"
-          variant="outlined"
-          value={formState.inputs.title.value}
-          onChange={formInputHandler}
-          onBlur={formBlurHandler}
-          error={
-            formState.inputs.title.isUsed && !formState.inputs.title.isValid
-          }
-          helperText={
-            formState.inputs.title.errorMessage && formState.inputs.title.isUsed
-              ? formState.inputs.title.errorMessage
-              : formState.inputs.title.helperText
-          }
-        />
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <Container maxWidth="sm">
+        <form
+          className={classes.newTaskForm_formContainer}
+          noValidate
+          autoComplete="off"
+          onSubmit={submitHandler}
+        >
+          <Typography className={classes.newTaskForm_title} variant="h5">
+            {task ? "Update Task" : "New Task"}
+          </Typography>
           <Typography
             className={classes.newTaskForm_formLabel}
             variant="caption"
           >
-            Due Date
+            Title *
           </Typography>
-          <KeyboardDatePicker
-            inputVariant="outlined"
-            format="dd/MM/yyyy"
-            value={formState.inputs.dueDateTime.value}
-            onChange={handleDueDateTimeChange}
-            onBlur={handleDueDateTimeBlur}
-            KeyboardButtonProps={{
-              "aria-label": "change date",
-            }}
+          <TextField
+            id="title"
+            variant="outlined"
+            value={formState.inputs.title.value}
+            onChange={formInputHandler}
+            onBlur={formBlurHandler}
             error={
-              formState.inputs.dueDateTime.isUsed &&
-              !formState.inputs.dueDateTime.isValid
+              formState.inputs.title.isUsed && !formState.inputs.title.isValid
             }
             helperText={
-              formState.inputs.dueDateTime.errorMessage &&
-              formState.inputs.dueDateTime.isUsed
-                ? formState.inputs.dueDateTime.errorMessage
-                : formState.inputs.dueDateTime.helperText.split("|")[0]
+              formState.inputs.title.errorMessage &&
+              formState.inputs.title.isUsed
+                ? formState.inputs.title.errorMessage
+                : formState.inputs.title.helperText
             }
           />
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Typography
+              className={classes.newTaskForm_formLabel}
+              variant="caption"
+            >
+              Due Date
+            </Typography>
+            <KeyboardDatePicker
+              inputVariant="outlined"
+              format="dd/MM/yyyy"
+              value={formState.inputs.dueDateTime.value}
+              onChange={handleDueDateTimeChange}
+              onBlur={handleDueDateTimeBlur}
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+              error={
+                formState.inputs.dueDateTime.isUsed &&
+                !formState.inputs.dueDateTime.isValid
+              }
+              helperText={
+                formState.inputs.dueDateTime.errorMessage &&
+                formState.inputs.dueDateTime.isUsed
+                  ? formState.inputs.dueDateTime.errorMessage
+                  : formState.inputs.dueDateTime.helperText.split("|")[0]
+              }
+            />
+            <Typography
+              className={classes.newTaskForm_formLabel}
+              variant="caption"
+            >
+              Due Time
+            </Typography>
+            <KeyboardTimePicker
+              inputVariant="outlined"
+              value={formState.inputs.dueDateTime.value}
+              onChange={handleDueDateTimeChange}
+              onBlur={handleDueDateTimeBlur}
+              KeyboardButtonProps={{
+                "aria-label": "change time",
+              }}
+              error={
+                formState.inputs.dueDateTime.isUsed &&
+                !formState.inputs.dueDateTime.isValid
+              }
+              helperText={
+                formState.inputs.dueDateTime.errorMessage &&
+                formState.inputs.dueDateTime.isUsed
+                  ? formState.inputs.dueDateTime.errorMessage
+                  : formState.inputs.dueDateTime.helperText.split("|")[1]
+              }
+            />
+          </MuiPickersUtilsProvider>
           <Typography
             className={classes.newTaskForm_formLabel}
             variant="caption"
           >
-            Due Time
+            Category
           </Typography>
-          <KeyboardTimePicker
-            inputVariant="outlined"
-            value={formState.inputs.dueDateTime.value}
-            onChange={handleDueDateTimeChange}
-            onBlur={handleDueDateTimeBlur}
-            KeyboardButtonProps={{
-              "aria-label": "change time",
-            }}
-            error={
-              formState.inputs.dueDateTime.isUsed &&
-              !formState.inputs.dueDateTime.isValid
-            }
-            helperText={
-              formState.inputs.dueDateTime.errorMessage &&
-              formState.inputs.dueDateTime.isUsed
-                ? formState.inputs.dueDateTime.errorMessage
-                : formState.inputs.dueDateTime.helperText.split("|")[1]
-            }
-          />
-        </MuiPickersUtilsProvider>
-        <Typography className={classes.newTaskForm_formLabel} variant="caption">
-          Category
-        </Typography>
-        <Select
-          labelId="category"
-          id="category"
-          variant="outlined"
-          value={formState.inputs.category.value}
-          onChange={handleCategoryChange}
-        >
-          {user.lists.map((listName: string) => (
-            <MenuItem key={listName} value={listName}>
-              {listName}
-            </MenuItem>
-          ))}
-        </Select>
-        <Button
-          className={classes.newTaskForm_submitButton}
-          variant="contained"
-          color="primary"
-          onClick={submitHandler}
-        >
-          {task ? "Update" : "Create"}
-        </Button>
+          <Select
+            labelId="category"
+            id="category"
+            variant="outlined"
+            value={formState.inputs.category.value}
+            onChange={handleCategoryChange}
+          >
+            {user.lists.map((listName: string) => (
+              <MenuItem key={listName} value={listName}>
+                {listName}
+              </MenuItem>
+            ))}
+          </Select>
+          <Button
+            className={classes.newTaskForm_submitButton}
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={submitHandler}
+          >
+            {task ? "Update" : "Create"}
+          </Button>
+        </form>
       </Container>
     </>
   );

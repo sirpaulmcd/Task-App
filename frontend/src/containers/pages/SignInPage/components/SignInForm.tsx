@@ -24,7 +24,13 @@ const SignInForm: React.FC<SignInFormProps> = () => {
   //#endregion
 
   //#region Basic form management ---------------------------------------------
-  const [formState, formDispatch, formInputHandler, formBlurHandler] = useForm(
+  const [
+    formState,
+    formDispatch,
+    formInputHandler,
+    formBlurHandler,
+    formSubmitHandler,
+  ] = useForm(
     {
       email: {
         value: "",
@@ -50,6 +56,7 @@ const SignInForm: React.FC<SignInFormProps> = () => {
 
   const submitHandler = async (e: any) => {
     e.preventDefault();
+    formSubmitHandler(e);
     if (formState.isValid) {
       await loginUserMutation();
     }
@@ -147,6 +154,7 @@ const SignInForm: React.FC<SignInFormProps> = () => {
         <Button
           className={`${classes.signInForm_formItem} ${classes.signInForm_submitButton}`}
           fullWidth
+          type="submit"
           variant="contained"
           color="primary"
           onClick={submitHandler}
