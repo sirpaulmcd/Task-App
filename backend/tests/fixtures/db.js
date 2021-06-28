@@ -61,7 +61,7 @@ const userTwo = {
 
 const newUserCreationObject = {
   name: "Jeff Goldblum",
-  username: "FlyGuy",
+  username: "JurassicJeff",
   email: "jeff@test.com",
   password: "test1234",
 };

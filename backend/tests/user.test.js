@@ -36,7 +36,7 @@ afterAll(async () => {
 test("Should sign up new user with valid properties.", async () => {
   // Sign up new user request
   const response = await request(app)
-    .post("/users")
+    .post("/api/users")
     .send(newUserCreationObject)
     .expect(201);
   // Assert that database was updated successfully
@@ -61,7 +61,7 @@ test("Should sign up new user with valid properties.", async () => {
 test("Should not sign up new user with invalid properties.", async () => {
   // Sign up new user request
   await request(app)
-    .post("/users")
+    .post("/api/users")
     .send({
       ...newUserCreationObject,
       email: "invalidEmail",
@@ -72,7 +72,7 @@ test("Should not sign up new user with invalid properties.", async () => {
 test("Should not sign up new user with additional properties.", async () => {
   // Sign up new user request
   await request(app)
-    .post("/users")
+    .post("/api/users")
     .send({
       ...newUserCreationObject,
       invalidField: true,
@@ -86,7 +86,7 @@ test("Should not sign up new user with additional properties.", async () => {
 
 test("Should sign in existing user.", async () => {
   await request(app)
-    .post("/users/login")
+    .post("/api/users/login")
     .send({
       email: userOne.email,
       password: userOne.password,
@@ -96,7 +96,7 @@ test("Should sign in existing user.", async () => {
 
 test("Should not sign in nonexisting user.", async () => {
   await request(app)
-    .post("/users/login")
+    .post("/api/users/login")
     .send({
       email: newUserCreationObject.email,
       password: newUserCreationObject.password,
@@ -106,7 +106,7 @@ test("Should not sign in nonexisting user.", async () => {
 
 test("Should not sign in given wrong password.", async () => {
   await request(app)
-    .post("/users/login")
+    .post("/api/users/login")
     .send({
       email: userOne.email,
       password: userOne.password + "a",
@@ -120,7 +120,7 @@ test("Should not sign in given wrong password.", async () => {
 
 test("Should log authenticated user out.", async () => {
   await request(app)
-    .post("/users/logout")
+    .post("/api/users/logout")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .set("Cookie", `logout_jwt=${userOneRefreshToken}`)
     .expect(200);
@@ -131,14 +131,14 @@ test("Should log authenticated user out.", async () => {
 
 test("Should not log unauthenticated user out.", async () => {
   await request(app)
-    .post("/users/logout")
+    .post("/api/users/logout")
     .set("Cookie", `logout_jwt=${userOneRefreshToken}`)
     .expect(401);
 });
 
 test("Should not log user out with invalid cookie.", async () => {
   await request(app)
-    .post("/users/logout")
+    .post("/api/users/logout")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .set("Cookie", "logout_jwt=invalid-cookie")
     .expect(500);
@@ -151,7 +151,7 @@ test("Should not log user out with invalid cookie.", async () => {
 test("Should log authenticated user out of all sessions.", async () => {
   // Sign in user second time (2 refresh tokens)
   await request(app)
-    .post("/users/login")
+    .post("/api/users/login")
     .send({
       email: userOne.email,
       password: userOne.password,
@@ -162,7 +162,7 @@ test("Should log authenticated user out of all sessions.", async () => {
   expect(user.refreshTokens.length).toEqual(2);
   // Sign user out of all sessions
   await request(app)
-    .post("/users/logoutAll")
+    .post("/api/users/logoutAll")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .set("Cookie", `refresh_jwt=${userOneRefreshToken}`)
     .expect(200);
@@ -177,7 +177,7 @@ test("Should log authenticated user out of all sessions.", async () => {
 
 test("Should refresh tokens of authenticated user", async () => {
   const response = await request(app)
-    .post("/users/refresh")
+    .post("/api/users/refresh")
     .set("Cookie", `refresh_jwt=${userOneRefreshToken}`)
     .expect(200);
   // Assert that valid access and refresh tokens returned in response
@@ -198,7 +198,7 @@ test("Should refresh tokens of authenticated user", async () => {
 
 test("Should not refresh tokens of unauthenticated user", async () => {
   await request(app)
-    .post("/users/refresh")
+    .post("/api/users/refresh")
     .set("Cookie", "logout_jwt=invalid-cookie")
     .expect(401);
 });
@@ -215,7 +215,7 @@ test("Should not refresh tokens of unauthenticated user", async () => {
 
 test("Should send password reset email if input email is valid.", async () => {
   await request(app)
-    .post("/users/password/forgot")
+    .post("/api/users/password/forgot")
     .send({
       email: userOne.email,
     })
@@ -224,7 +224,7 @@ test("Should send password reset email if input email is valid.", async () => {
 
 test("Should not send password reset email if input email is invalid.", async () => {
   await request(app)
-    .post("/users/password/forgot")
+    .post("/api/users/password/forgot")
     .send({
       email: userOne.email + "a",
     })
@@ -235,7 +235,7 @@ test("Should reset password for user with valid password reset token.", async ()
   const newPassword = "newPassword!";
   // Request password resert
   await request(app)
-    .post("/users/password/reset")
+    .post("/api/users/password/reset")
     .send({
       forgotPasswordToken: userOneForgotPasswordToken,
       newPassword: newPassword,
@@ -251,7 +251,7 @@ test("Should not reset password for user with invalid password reset token.", as
   const newPassword = "newPassword!";
   // Request password resert
   await request(app)
-    .post("/users/password/reset")
+    .post("/api/users/password/reset")
     .send({
       forgotPasswordToken: userOneForgotPasswordToken + "a",
       newPassword: newPassword,
@@ -265,7 +265,7 @@ test("Should not reset password for user with invalid password reset token.", as
 
 test("Should get profile for authenticated user.", async () => {
   const response = await request(app)
-    .get("/users/me")
+    .get("/api/users/me")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send()
     .expect(200);
@@ -277,7 +277,7 @@ test("Should get profile for authenticated user.", async () => {
 
 test("Should not get profile for unauthenticated user.", async () => {
   await request(app)
-    .get("/users/me")
+    .get("/api/users/me")
     .set("Authorization", `Bearer ${userOneAccessToken}ExtraCharacters`)
     .send()
     .expect(401);
@@ -285,7 +285,7 @@ test("Should not get profile for unauthenticated user.", async () => {
 
 test("Should delete account for authenticated user.", async () => {
   await request(app)
-    .delete("/users/me")
+    .delete("/api/users/me")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send()
     .expect(200);
@@ -296,7 +296,7 @@ test("Should delete account for authenticated user.", async () => {
 
 test("Should not delete account for unauthenticated user.", async () => {
   await request(app)
-    .delete("/users/me")
+    .delete("/api/users/me")
     .set("Authorization", `Bearer ${userOneAccessToken}ExtraCharacters`)
     .send()
     .expect(401);
@@ -305,7 +305,7 @@ test("Should not delete account for unauthenticated user.", async () => {
 test("Should update name of authenticated user.", async () => {
   const newName = "Seymour Skinner";
   await request(app)
-    .patch("/users/me")
+    .patch("/api/users/me")
     .send({
       name: newName,
     })
@@ -319,7 +319,7 @@ test("Should update name of authenticated user.", async () => {
 test("Should not update name of unauthenticated user.", async () => {
   const newName = "Seymour Skinner";
   await request(app)
-    .patch("/users/me")
+    .patch("/api/users/me")
     .send({
       name: newName,
     })
@@ -328,7 +328,7 @@ test("Should not update name of unauthenticated user.", async () => {
 
 test("Should not update invalid field for authenticated user.", async () => {
   await request(app)
-    .patch("/users/me")
+    .patch("/api/users/me")
     .send({
       invalidField: "Crazy Legs",
     })
@@ -344,7 +344,7 @@ test("Should update password for authenticated user when old password correct.",
   const newPassword = "newPassword!";
   // Upload avatar image for user
   await request(app)
-    .post("/users/me/password")
+    .post("/api/users/me/password")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send({
       oldPassword: userOne.password,
@@ -361,7 +361,7 @@ test("Should not update password for authenticated user when old password incorr
   const newPassword = "newPassword!";
   // Upload avatar image for user
   await request(app)
-    .post("/users/me/password")
+    .post("/api/users/me/password")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send({
       oldPassword: "aasdasdas",
@@ -374,7 +374,7 @@ test("Should not update password for unauthenticated user.", async () => {
   const newPassword = "newPassword!";
   // Upload avatar image for user
   await request(app)
-    .post("/users/me/password")
+    .post("/api/users/me/password")
     .set("Authorization", `Bearer ${userOneAccessToken}asdasd`)
     .send({
       oldPassword: userOne.password,
@@ -389,7 +389,7 @@ test("Should not update password for unauthenticated user.", async () => {
 
 test("Should upload avatar image.", async () => {
   await request(app)
-    .post("/users/me/avatar")
+    .post("/api/users/me/avatar")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .attach("avatar", "tests/fixtures/profile-pic.jpg")
     .expect(200);
@@ -400,7 +400,7 @@ test("Should upload avatar image.", async () => {
 
 test("Should not upload avatar image for unauthenticated user.", async () => {
   await request(app)
-    .post("/users/me/avatar")
+    .post("/api/users/me/avatar")
     .attach("avatar", "tests/fixtures/profile-pic.jpg")
     .expect(401);
 });
@@ -412,13 +412,13 @@ test("Should not upload avatar image for unauthenticated user.", async () => {
 test("Should return image reponse.", async () => {
   // Upload avatar image for user
   await request(app)
-    .post("/users/me/avatar")
+    .post("/api/users/me/avatar")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .attach("avatar", "tests/fixtures/profile-pic.jpg")
     .expect(200);
   // Get avatar image
   const response = await request(app)
-    .get(`/users/${userOne._id}/avatar`)
+    .get(`/api/users/${userOne._id}/avatar`)
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .expect(200);
   // Assert that png image is shown
@@ -432,7 +432,7 @@ test("Should return image reponse.", async () => {
 test("Should verify email of user with valid token.", async () => {
   // Access endpoint with valid token
   await request(app)
-    .get(`/users/verification/${userOneVerifyEmailToken}`)
+    .get(`/api/users/verification/${userOneVerifyEmailToken}`)
     .expect(302);
   // Check to see that user's email was validated
   const user = await User.findById(userOne._id);
@@ -442,7 +442,7 @@ test("Should verify email of user with valid token.", async () => {
 test("Should not verify email of user with invalid token.", async () => {
   // Access endpoint with valid token
   await request(app)
-    .get(`/users/verification/${userOneAccessToken}`)
+    .get(`/api/users/verification/${userOneAccessToken}`)
     .expect(401);
   // Check to see that user's email was not validated
   const user = await User.findById(userOne._id);

@@ -33,7 +33,7 @@ afterAll(async () => {
 
 test("Should create task for authenticated user.", async () => {
   const response = await request(app)
-    .post("/tasks")
+    .post("/api/tasks")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send({
       title: "Test task title.",
@@ -48,7 +48,7 @@ test("Should create task for authenticated user.", async () => {
 
 test("Should not create task for unauthenticated user.", async () => {
   await request(app)
-    .post("/tasks")
+    .post("/api/tasks")
     .send({
       title: "Test task.",
     })
@@ -57,7 +57,7 @@ test("Should not create task for unauthenticated user.", async () => {
 
 test("Should get all of the user's tasks.", async () => {
   const response = await request(app)
-    .get("/tasks")
+    .get("/api/tasks")
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send()
     .expect(200);
@@ -71,7 +71,7 @@ test("Should get all of the user's tasks.", async () => {
 
 test("Should get user's own task.", async () => {
   const response = await request(app)
-    .get(`/tasks/${taskOne._id}`)
+    .get(`/api/tasks/${taskOne._id}`)
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send()
     .expect(200);
@@ -81,7 +81,7 @@ test("Should get user's own task.", async () => {
 
 test("Should not get other user's task.", async () => {
   await request(app)
-    .get(`/tasks/${taskThree._id}`)
+    .get(`/api/tasks/${taskThree._id}`)
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send()
     .expect(404);
@@ -89,7 +89,7 @@ test("Should not get other user's task.", async () => {
 
 test("Should update task for authenticated user.", async () => {
   await request(app)
-    .patch(`/tasks/${taskTwo._id}`)
+    .patch(`/api/tasks/${taskTwo._id}`)
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send({
       title: "Whoops",
@@ -104,7 +104,7 @@ test("Should update task for authenticated user.", async () => {
 
 test("Should delete user's own task.", async () => {
   await request(app)
-    .delete(`/tasks/${taskOne._id}`)
+    .delete(`/api/tasks/${taskOne._id}`)
     .set("Authorization", `Bearer ${userOneAccessToken}`)
     .send()
     .expect(200);
@@ -115,7 +115,7 @@ test("Should delete user's own task.", async () => {
 
 test("Should not delete other user's tasks.", async () => {
   await request(app)
-    .delete(`/tasks/${taskOne._id}`)
+    .delete(`/api/tasks/${taskOne._id}`)
     .set("Authorization", `Bearer ${userTwoAccessToken}`)
     .send()
     .expect(404);
