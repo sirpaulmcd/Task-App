@@ -1,16 +1,9 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Typography,
-} from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 
+import useAlertDialog from "../../../../../../shared/hooks/useAlertDialog";
 import useDeleteAccountSectionStyles from "./DeleteAccountSectionStyles";
 
 interface SessionSectionProps {}
@@ -40,48 +33,11 @@ export const DeleteAccountSection: React.FC<SessionSectionProps> = () => {
   //#endregion
 
   //#region Alert dialog ------------------------------------------------------
-  const [alertDialogOpen, setAlertDialogOpen] = useState(false);
-
-  const handleAlertDialogOpen = () => {
-    setAlertDialogOpen(true);
-  };
-
-  const handleAlertDialogClose = () => {
-    setAlertDialogOpen(false);
-  };
-
-  const alertDialogContent = (
-    <div>
-      <Dialog
-        open={alertDialogOpen}
-        onClose={handleAlertDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Once an account is deleted, it cannot be recovered. You will have to
-            make a new account to continue using this service.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAlertDialogClose} color="inherit">
-            No
-          </Button>
-          <Button
-            onClick={(e) => {
-              submitHandler(e);
-              handleAlertDialogClose();
-            }}
-            color="inherit"
-            autoFocus
-          >
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+  const [handleAlertDialogOpen, alertDialogContent]: any = useAlertDialog(
+    "Once an account is deleted, it cannot be recovered. You will have to make a new account to continue using this service.",
+    "Yes",
+    "No",
+    submitHandler
   );
   //#endregion
 
