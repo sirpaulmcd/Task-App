@@ -5,6 +5,7 @@ import { Button, TextField, Typography } from "@material-ui/core";
 import DoneIcon from "@material-ui/icons/Done";
 
 import { useUserContext } from "../../../../../../shared/contexts/UserContext";
+import useAlertDialog from "../../../../../../shared/hooks/useAlertDialog";
 import { useForm } from "../../../../../../shared/hooks/useForm";
 import {
   VALIDATOR_ALPHANUMERIC,
@@ -141,9 +142,20 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
   }, [formState.inputs.username.value, user.username, checkUniqueFieldQuery]);
   //#endregion
 
+  //#region Alert dialog ------------------------------------------------------
+  const [handleAlertDialogOpen, alertDialogContent]: any = useAlertDialog(
+    "",
+    "Are you sure you want to change your username?",
+    "No",
+    "Yes",
+    submitHandler
+  );
+  //#endregion
+
   //#region TSX ---------------------------------------------------------------
   return (
     <>
+      {alertDialogContent}
       <Typography className={classes.usernameSection_title} variant="h5">
         Change username
       </Typography>
@@ -185,7 +197,7 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
               className={`${classes.usernameSection_submitButton} ${classes.usernameSection_formItem}`}
               variant="contained"
               color="primary"
-              onClick={submitHandler}
+              onClick={handleAlertDialogOpen}
             >
               Update username
             </Button>

@@ -10,9 +10,10 @@ import {
 } from "@material-ui/core";
 
 const useAlertDialog = (
-  message: string,
-  confirmButtonText: string,
+  title: string,
+  description: string,
   cancelButtonText: string,
+  confirmButtonText: string,
   onConfirm: any
 ) => {
   //#region Local state -------------------------------------------------------
@@ -29,6 +30,45 @@ const useAlertDialog = (
   };
   //#endregion
 
+  //#region Title content -----------------------------------------------------
+  let titleContent = null;
+  if (title) {
+    titleContent = (
+      <>
+        <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      </>
+    );
+  }
+  //#endregion
+
+  //#region Description content -----------------------------------------------
+  let descriptionContent = null;
+  if (description) {
+    descriptionContent = (
+      <>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {description}
+          </DialogContentText>
+        </DialogContent>
+      </>
+    );
+  }
+  //#endregion
+
+  //#region Cancel button content ---------------------------------------------
+  let cancelButtonContent = null;
+  if (cancelButtonText) {
+    cancelButtonContent = (
+      <>
+        <Button onClick={handleAlertDialogClose} color="inherit">
+          {cancelButtonText}
+        </Button>
+      </>
+    );
+  }
+  //#endregion
+
   //#region TSX ---------------------------------------------------------------
   const alertDialogContent = (
     <div>
@@ -38,16 +78,10 @@ const useAlertDialog = (
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {message}
-          </DialogContentText>
-        </DialogContent>
+        {titleContent}
+        {descriptionContent}
         <DialogActions>
-          <Button onClick={handleAlertDialogClose} color="inherit">
-            {cancelButtonText}
-          </Button>
+          {cancelButtonContent}
           <Button
             onClick={(e) => {
               onConfirm(e);

@@ -34,9 +34,10 @@ export const DeleteAccountSection: React.FC<SessionSectionProps> = () => {
 
   //#region Alert dialog ------------------------------------------------------
   const [handleAlertDialogOpen, alertDialogContent]: any = useAlertDialog(
+    "Are you sure?",
     "Once an account is deleted, it cannot be recovered. You will have to make a new account to continue using this service.",
-    "Yes",
     "No",
+    "Yes",
     submitHandler
   );
   //#endregion

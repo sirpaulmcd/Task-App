@@ -5,6 +5,7 @@ import { Button, TextField, Typography } from "@material-ui/core";
 import DoneIcon from "@material-ui/icons/Done";
 
 import { useUserContext } from "../../../../../../shared/contexts/UserContext";
+import useAlertDialog from "../../../../../../shared/hooks/useAlertDialog";
 import { useForm } from "../../../../../../shared/hooks/useForm";
 import {
   VALIDATOR_EMAIL,
@@ -129,9 +130,20 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
   }, [formState.inputs.email.value, user.email, checkUniqueFieldQuery]);
   //#endregion
 
+  //#region Alert dialog ------------------------------------------------------
+  const [handleAlertDialogOpen, alertDialogContent]: any = useAlertDialog(
+    "",
+    "Are you sure you want to change your email?",
+    "No",
+    "Yes",
+    submitHandler
+  );
+  //#endregion
+
   //#region TSX ---------------------------------------------------------------
   return (
     <>
+      {alertDialogContent}
       <Typography className={classes.emailSection_title} variant="h5">
         Change email
       </Typography>
@@ -172,7 +184,7 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
               className={`${classes.emailSection_submitButton} ${classes.emailSection_formItem}`}
               variant="contained"
               color="primary"
-              onClick={submitHandler}
+              onClick={handleAlertDialogOpen}
             >
               Update email
             </Button>
