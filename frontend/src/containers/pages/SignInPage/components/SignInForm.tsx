@@ -70,6 +70,16 @@ const SignInForm: React.FC<SignInFormProps> = () => {
       })
       .catch((error) => {
         formDispatch({
+          type: "CHANGE",
+          value: "",
+          input: "email",
+        });
+        formDispatch({
+          type: "CHANGE",
+          value: "",
+          input: "password",
+        });
+        formDispatch({
           type: "INVALIDATE",
           errorMessage: "Email and password combination is invalid.",
           input: "email",
