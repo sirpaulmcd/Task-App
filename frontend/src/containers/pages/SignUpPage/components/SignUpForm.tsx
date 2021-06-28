@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 
 import { Button, TextField, Typography } from "@material-ui/core";
@@ -31,11 +31,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
   const auth: any = useAccessTokenContext();
   //#endregion
 
-  //#region Local ref ---------------------------------------------------------
-  const emailRef = useRef<HTMLInputElement>();
-  const usernameRef = useRef<HTMLInputElement>();
-  //#endregion
-
   //#region Register user mutation --------------------------------------------
   const registerUserMutation = async () => {
     const newUser = {
@@ -53,6 +48,19 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
       .catch((error) => {
         invalidateForm(error);
       });
+  };
+
+  /**
+   * If user somehow bypasses frontend unique email/username checking, display
+   * error message from backend rejection.
+   */
+  const invalidateForm = (error: any) => {
+    if (error.response.data.error.toLowerCase().includes("email")) {
+      invalidateEmailFormField();
+    }
+    if (error.response.data.error.toLowerCase().includes("username")) {
+      invalidateUsernameFormField();
+    }
   };
   //#endregion
 
@@ -119,22 +127,87 @@ export const SignUpForm: React.FC<SignUpFormProps> = () => {
     }
   };
 
-  const invalidateForm = (error: any) => {
-    if (error.response.data.error.toLowerCase().includes("email")) {
-      formDispatch({
-        type: "INVALIDATE",
-        errorMessage: "Email is already taken.",
-        input: "email",
+  const invalidateUsernameFormField = useCallback(() => {
+    formDispatch({
+      type: "INVALIDATE",
+      errorMessage: `Username is already taken.`,
+      input: "username",
+    });
+  }, [formDispatch]);
+
+  const invalidateEmailFormField = useCallback(() => {
+    formDispatch({
+      type: "INVALIDATE",
+      errorMessage: "Email is already taken.",
+      input: "email",
+    });
+  }, [formDispatch]);
+  //#endregion
+
+  //#region Unique email query ------------------------------------------------
+  const checkUniqueEmailQuery = useCallback(async () => {
+    await axios
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users/unique`, {
+        email: formState.inputs.email.value,
+      })
+      .catch((error) => {
+        invalidateEmailFormField();
       });
-    }
-    if (error.response.data.error.toLowerCase().includes("username")) {
-      formDispatch({
-        type: "INVALIDATE",
-        errorMessage: `Username ${formState.inputs.username.value} is not available.`,
-        input: "username",
+  }, [formState.inputs.email.value, invalidateEmailFormField]);
+
+  /**
+   * Reference to email text field. Used to check if user is done typing.
+   */
+  const emailRef = useRef<HTMLInputElement>();
+
+  /**
+   * When user has stopped typing for half a second, send query to check if
+   * input email is unique.
+   */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      let email = formState.inputs.email.value;
+      if (email === emailRef.current?.value) {
+        checkUniqueEmailQuery();
+      }
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [formState.inputs.email.value, checkUniqueEmailQuery]);
+  //#endregion
+
+  //#region Unique username query ---------------------------------------------
+  const checkUniqueUsernameQuery = useCallback(async () => {
+    await axios
+      .post(`${process.env.REACT_APP_BACKEND_URI}/users/unique`, {
+        username: formState.inputs.username.value,
+      })
+      .catch((error) => {
+        invalidateUsernameFormField();
       });
-    }
-  };
+  }, [formState.inputs.username.value, invalidateUsernameFormField]);
+
+  /**
+   * Reference to username text field. Used to check if user is done typing.
+   */
+  const usernameRef = useRef<HTMLInputElement>();
+
+  /**
+   * When user has stopped typing for half a second, send query to check if
+   * input username is unique.
+   */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      let username = formState.inputs.username.value;
+      if (username === usernameRef.current?.value) {
+        checkUniqueUsernameQuery();
+      }
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [formState.inputs.username.value, checkUniqueUsernameQuery]);
   //#endregion
 
   //#region TSX ---------------------------------------------------------------
