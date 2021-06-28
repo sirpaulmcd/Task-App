@@ -1,7 +1,7 @@
-import { createMuiTheme } from "@material-ui/core";
+import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
 import { indigo } from "@material-ui/core/colors";
 
-export const lightTheme = createMuiTheme({
+let lightTheme = createMuiTheme({
   palette: {
     primary: {
       main: indigo[500],
@@ -11,3 +11,7 @@ export const lightTheme = createMuiTheme({
     },
   },
 });
+
+lightTheme = responsiveFontSizes(lightTheme);
+
+export default lightTheme;

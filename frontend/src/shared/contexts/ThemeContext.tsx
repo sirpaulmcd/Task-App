@@ -2,8 +2,8 @@ import React, { ReactNode, useContext, useEffect, useState } from "react";
 
 import { ThemeProvider } from "@material-ui/core/styles";
 
-import { darkTheme } from "../themes/darkTheme";
-import { lightTheme } from "../themes/lightTheme";
+import darkTheme from "../themes/darkTheme";
+import lightTheme from "../themes/lightTheme";
 import { useUserContext } from "./UserContext";
 
 export enum UserThemes {
