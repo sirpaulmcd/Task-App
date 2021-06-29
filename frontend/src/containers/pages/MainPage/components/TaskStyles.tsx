@@ -44,9 +44,13 @@ const useTaskStyles = makeStyles((theme) => ({
     flexGrow: 1,
     wordWrap: "break-word",
   },
-  task_titleText: {},
+  task_titleText: {
+    lineHeight: 1.2,
+  },
   task_dueDateTimeText: {},
-  task_categoryText: {},
+  task_categoryText: {
+    marginTop: "5px",
+  },
 }));
 
 export default useTaskStyles;

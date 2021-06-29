@@ -38,6 +38,7 @@ const SignUpPage: React.FC<SignUpPageProps> = () => {
             .
           </Typography>
         </Paper>
+        <br />
       </Container>
     </>
   );

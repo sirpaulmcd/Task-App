@@ -55,7 +55,7 @@ const UnauthenticatedHeader: React.FC<UnauthenticatedHeaderProps> = ({
                 Sign In
               </Button>
               <Button
-                className={`${classes.unauthenticatedHeader_button}`}
+                className={classes.unauthenticatedHeader_button}
                 component={Link}
                 to={"/signup"}
                 variant="contained"
