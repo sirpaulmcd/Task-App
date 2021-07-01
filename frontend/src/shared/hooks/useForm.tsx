@@ -77,6 +77,18 @@ const formReducer = (state: any, action: any): any => {
           },
         },
       };
+    // Marks the dispatched field as "unused"
+    case "UNBLUR":
+      return {
+        ...state,
+        inputs: {
+          ...state.inputs,
+          [action.input]: {
+            ...state.inputs[action.input],
+            isUsed: false,
+          },
+        },
+      };
     // Invalidates the dispatched field
     case "INVALIDATE":
       return {
@@ -90,6 +102,7 @@ const formReducer = (state: any, action: any): any => {
             isUsed: true,
           },
         },
+        isValid: false,
       };
     default:
       return state;
@@ -135,22 +148,34 @@ export const useForm = (initialInputs: any, initialFormValidity: any) => {
    * for validity.
    */
   // To be called when a form is submitted
-  const formSubmitHandler = useCallback(
-    (event: any) => {
-      for (const input in formState.inputs) {
-        formDispatch({
-          type: "CHANGE",
-          value: formState.inputs[input].value,
-          input: input,
-        });
-        formDispatch({
-          type: "BLUR",
-          input: input,
-        });
-      }
-    },
-    [formState.inputs]
-  );
+  const formSubmitHandler = useCallback(() => {
+    for (const input in formState.inputs) {
+      formDispatch({
+        type: "CHANGE",
+        value: formState.inputs[input].value,
+        input: input,
+      });
+      formDispatch({
+        type: "BLUR",
+        input: input,
+      });
+    }
+  }, [formState.inputs]);
+
+  const formResetHandler = useCallback(() => {
+    console.log("resetting");
+    for (const input in formState.inputs) {
+      formDispatch({
+        type: "CHANGE",
+        value: initialInputs[input].value,
+        input: input,
+      });
+      formDispatch({
+        type: "UNBLUR",
+        input: input,
+      });
+    }
+  }, [formState.inputs, initialInputs]);
 
   return [
     formState,
@@ -158,6 +183,7 @@ export const useForm = (initialInputs: any, initialFormValidity: any) => {
     formInputHandler,
     formBlurHandler,
     formSubmitHandler,
+    formResetHandler,
   ];
 };
 

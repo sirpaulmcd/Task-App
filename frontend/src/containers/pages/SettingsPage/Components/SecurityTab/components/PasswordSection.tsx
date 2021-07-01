@@ -21,7 +21,14 @@ export const PasswordSection: React.FC<PasswordSectionProps> = () => {
 
   //#region Basic form management ---------------------------------------------
   const [passwordUpdateSuccess, setPasswordUpdateSuccess] = useState(false);
-  const [formState, formDispatch, formInputHandler, formBlurHandler] = useForm(
+  const [
+    formState,
+    formDispatch,
+    formInputHandler,
+    formBlurHandler,
+    formSubmitHandler,
+    formResetHandler,
+  ] = useForm(
     {
       oldPassword: {
         value: "",
@@ -74,8 +81,18 @@ export const PasswordSection: React.FC<PasswordSectionProps> = () => {
       return true;
     } else {
       formDispatch({
+        type: "CHANGE",
+        value: "",
+        input: "newPassword",
+      });
+      formDispatch({
+        type: "CHANGE",
+        value: "",
+        input: "confirmNewPassword",
+      });
+      formDispatch({
         type: "INVALIDATE",
-        errorMessage: "New passwords do not match.",
+        errorMessage: "New passwords did not match. Try again.",
         input: "newPassword",
       });
       formDispatch({
@@ -92,6 +109,7 @@ export const PasswordSection: React.FC<PasswordSectionProps> = () => {
    */
   const submitHandler = async (e: any) => {
     e.preventDefault();
+    formSubmitHandler();
     if (formState.isValid && checkNewPasswordsMatch()) {
       await updatePasswordMutation();
     }
@@ -107,6 +125,7 @@ export const PasswordSection: React.FC<PasswordSectionProps> = () => {
         newPassword: formState.inputs.newPassword.value,
       })
       .then((res) => {
+        formResetHandler();
         setPasswordUpdateSuccess(true);
       })
       .catch((error) => {
