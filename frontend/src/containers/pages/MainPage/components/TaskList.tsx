@@ -36,14 +36,16 @@ const TaskList: React.FC<TaskListProps> = () => {
   //#endregion
 
   //#region Get user tasks query ----------------------------------------------
-  let taskUrl = `${process.env.REACT_APP_BACKEND_URI}/tasks?sortBy=dueDateTime:desc`;
+  let completionParameter = "&completed=false";
+  let categoryParameter = "";
   if (params.taskList) {
     if (params.taskList === "Finished") {
-      taskUrl += "&completed=true";
+      completionParameter = "&completed=true";
     } else {
-      taskUrl += `&category=${params.taskList}`;
+      categoryParameter += `&category=${params.taskList}`;
     }
   }
+  let taskUrl = `${process.env.REACT_APP_BACKEND_URI}/tasks?sortBy=dueDateTime:desc${completionParameter}${categoryParameter}`;
 
   const getUserTasks = useCallback(async () => {
     await axios
@@ -63,16 +65,16 @@ const TaskList: React.FC<TaskListProps> = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   }, [taskUrl]);
   //#endregion
 
   //#region Initialization ----------------------------------------------------
   useEffect(() => {
-    setInitialized(false);
-    setTasks([]);
-    getUserTasks();
+    (async function () {
+      await getUserTasks();
+    })();
   }, [params.taskList, setTasks, getUserTasks]);
   //#endregion
 
@@ -147,7 +149,6 @@ const TaskList: React.FC<TaskListProps> = () => {
   );
 
   let noTasksContent = null;
-  console.log(initialized);
 
   if (initialized) {
     noTasksContent = (
@@ -174,7 +175,6 @@ const TaskList: React.FC<TaskListProps> = () => {
       </>
     );
   }
-
   //#endregion
 
   //#region TSX ---------------------------------------------------------------

@@ -274,6 +274,20 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
               KeyboardButtonProps={{
                 "aria-label": "change date",
               }}
+              okLabel={
+                user.theme === "DARK" ? (
+                  <span style={{ color: "#fafafa" }}>Ok</span>
+                ) : (
+                  "Ok"
+                )
+              }
+              cancelLabel={
+                user.theme === "DARK" ? (
+                  <span style={{ color: "#fafafa" }}>Cancel</span>
+                ) : (
+                  "Cancel"
+                )
+              }
               error={
                 formState.inputs.dueDateTime.isUsed &&
                 !formState.inputs.dueDateTime.isValid
@@ -299,6 +313,20 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
               KeyboardButtonProps={{
                 "aria-label": "change time",
               }}
+              okLabel={
+                user.theme === "DARK" ? (
+                  <span style={{ color: "#fafafa" }}>Ok</span>
+                ) : (
+                  "Ok"
+                )
+              }
+              cancelLabel={
+                user.theme === "DARK" ? (
+                  <span style={{ color: "#fafafa" }}>Cancel</span>
+                ) : (
+                  "Cancel"
+                )
+              }
               error={
                 formState.inputs.dueDateTime.isUsed &&
                 !formState.inputs.dueDateTime.isValid
