@@ -80,7 +80,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ getUserTasks, onClose, task }) => {
       )
       .then(async (res) => {
         if (res.status === 200 && getUserTasks) {
-          getUserTasks();
+          await getUserTasks();
         }
         onClose();
       })

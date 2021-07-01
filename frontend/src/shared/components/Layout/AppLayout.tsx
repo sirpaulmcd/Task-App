@@ -6,7 +6,7 @@ import UnauthenticatedNavigation from "../Navigation/Unauthenticated/Unauthentic
 
 interface LayoutProps {}
 
-export const AppLayout: React.FC<LayoutProps> = ({ children }) => {
+const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   //#region Context -----------------------------------------------------------
   const auth: any = useAccessTokenContext();
   //#endregion
@@ -28,3 +28,5 @@ export const AppLayout: React.FC<LayoutProps> = ({ children }) => {
   );
   //#endregion
 };
+
+export default AppLayout;

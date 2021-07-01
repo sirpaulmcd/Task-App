@@ -4,7 +4,7 @@ import usePageLayoutStyles from "./PageLayoutStyles";
 
 interface PageProps {}
 
-export const PageLayout: React.FC<PageProps> = ({ children }) => {
+const PageLayout: React.FC<PageProps> = ({ children }) => {
   //#region Styles ------------------------------------------------------------
   const classes = usePageLayoutStyles();
   //#endregion
@@ -21,3 +21,5 @@ export const PageLayout: React.FC<PageProps> = ({ children }) => {
   );
   //#endregion
 };
+
+export default PageLayout;

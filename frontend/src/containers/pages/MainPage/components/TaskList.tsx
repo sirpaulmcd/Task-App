@@ -27,6 +27,7 @@ const TaskList: React.FC<TaskListProps> = () => {
   //#endregion
 
   //#region Local state -------------------------------------------------------
+  const [initialized, setInitialized] = useState(false);
   const [tasks, setTasks] = useState<{}[]>([]);
   //#endregion
 
@@ -58,6 +59,7 @@ const TaskList: React.FC<TaskListProps> = () => {
               }
             })
           );
+          setInitialized(true);
         }
       })
       .catch((error) => {
@@ -68,6 +70,7 @@ const TaskList: React.FC<TaskListProps> = () => {
 
   //#region Initialization ----------------------------------------------------
   useEffect(() => {
+    setInitialized(false);
     setTasks([]);
     getUserTasks();
   }, [params.taskList, setTasks, getUserTasks]);
@@ -143,29 +146,35 @@ const TaskList: React.FC<TaskListProps> = () => {
     </>
   );
 
-  const noTasksContent = (
-    <>
-      <Container className={classes.taskList_noTasksContainer} maxWidth="sm">
-        <Typography
-          className={classes.taskList_noTasksText}
-          align="center"
-          variant="h3"
-        >
-          <AssignmentTurnedInIcon fontSize="inherit" />
-          <br />
-          No Tasks
-        </Typography>
-        <Button
-          className={classes.taskList_newTaskButton}
-          variant="outlined"
-          size="large"
-          onClick={handleNewTaskModalOpen}
-        >
-          Create new task
-        </Button>
-      </Container>
-    </>
-  );
+  let noTasksContent = null;
+  console.log(initialized);
+
+  if (initialized) {
+    noTasksContent = (
+      <>
+        <Container className={classes.taskList_noTasksContainer} maxWidth="sm">
+          <Typography
+            className={classes.taskList_noTasksText}
+            align="center"
+            variant="h3"
+          >
+            <AssignmentTurnedInIcon fontSize="inherit" />
+            <br />
+            No Tasks
+          </Typography>
+          <Button
+            className={classes.taskList_newTaskButton}
+            variant="outlined"
+            size="large"
+            onClick={handleNewTaskModalOpen}
+          >
+            Create new task
+          </Button>
+        </Container>
+      </>
+    );
+  }
+
   //#endregion
 
   //#region TSX ---------------------------------------------------------------

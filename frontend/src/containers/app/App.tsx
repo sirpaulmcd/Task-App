@@ -1,10 +1,10 @@
 import { Redirect, Route, Switch } from "react-router-dom";
 
-import { AppLayout } from "../../shared/components/Layout/AppLayout";
+import AppLayout from "../../shared/components/Layout/AppLayout";
+import LoadingLayout from "../../shared/components/Layout/LoadingLayout";
 import { useAccessTokenContext } from "../../shared/contexts/AccessTokenContext";
 import { useThemeContext } from "../../shared/contexts/ThemeContext";
 import LandingPage from "../pages/LandingPage/LandingPage";
-import LoadingPage from "../pages/LoadingPage/LoadingPage";
 import TaskPage from "../pages/MainPage/TaskPage";
 import { SettingsPage } from "../pages/SettingsPage/SettingsPage";
 import SignInPage from "../pages/SignInPage/SignInPage";
@@ -46,9 +46,7 @@ const App: React.FC<AppProps> = () => {
   if (auth.loading || themeContextLoading) {
     return (
       <>
-        <AppLayout>
-          <LoadingPage />
-        </AppLayout>
+        <LoadingLayout />
       </>
     );
   }
