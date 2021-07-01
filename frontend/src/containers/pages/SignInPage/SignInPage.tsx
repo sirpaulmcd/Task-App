@@ -28,7 +28,9 @@ const SignInPage: React.FC<SignInPageProps> = () => {
         <Paper className={classes.signInPage_paper}>
           <SignInForm />
         </Paper>
-        <Paper className={classes.signInPage_paper}>
+        <Paper
+          className={`${classes.signInPage_paper} ${classes.signInPage_lastItem}`}
+        >
           <Typography align="center">
             New to Task App?{" "}
             <Link component={RouterLink} to="/signup">
@@ -37,7 +39,6 @@ const SignInPage: React.FC<SignInPageProps> = () => {
             .
           </Typography>
         </Paper>
-        <br />
       </Container>
     </>
   );

@@ -7,6 +7,10 @@ const useThemeSectionStyles = makeStyles((theme) => ({
   themeSection_bottomLabel: {
     marginBottom: theme.spacing(2),
   },
+  themeSection_radioGroup: {
+    paddingTop: "10px",
+    paddingLeft: "10px",
+  },
 }));
 
 export default useThemeSectionStyles;

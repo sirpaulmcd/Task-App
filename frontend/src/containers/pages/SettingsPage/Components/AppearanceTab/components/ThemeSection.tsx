@@ -51,6 +51,7 @@ export const ThemeSection: React.FC<ThemeSectionProps> = () => {
         Change theme
       </Typography>
       <RadioGroup
+        className={classes.themeSection_radioGroup}
         aria-label="theme"
         name="themes"
         value={user.theme || UserThemes.LIGHT}

@@ -18,6 +18,9 @@ const useSettingsPageStyles = makeStyles((theme) => ({
     padding: "15px",
     marginBottom: "10px",
   },
+  settingsPage_title: {
+    marginBottom: "10px",
+  },
 }));
 
 export default useSettingsPageStyles;
