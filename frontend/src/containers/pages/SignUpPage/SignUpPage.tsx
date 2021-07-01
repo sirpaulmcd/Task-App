@@ -29,7 +29,9 @@ const SignUpPage: React.FC<SignUpPageProps> = () => {
         <Paper className={classes.signUpPage_paper}>
           <SignUpForm />
         </Paper>
-        <Paper className={classes.signUpPage_paper}>
+        <Paper
+          className={`${classes.signUpPage_paper} ${classes.signUpPage_lastItem}`}
+        >
           <Typography align="center">
             Already have an account?{" "}
             <Link component={RouterLink} to="/signin">
@@ -38,7 +40,6 @@ const SignUpPage: React.FC<SignUpPageProps> = () => {
             .
           </Typography>
         </Paper>
-        <br />
       </Container>
     </>
   );

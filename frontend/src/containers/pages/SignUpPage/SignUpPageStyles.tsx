@@ -12,6 +12,9 @@ const useSignUpPageStyles = makeStyles((theme) => ({
     width: "100%",
     padding: "20px",
   },
+  signUpPage_lastItem: {
+    marginBottom: "25px",
+  },
 }));
 
 export default useSignUpPageStyles;
