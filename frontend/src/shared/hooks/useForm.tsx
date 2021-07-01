@@ -149,18 +149,20 @@ export const useForm = (initialInputs: any, initialFormValidity: any) => {
    */
   // To be called when a form is submitted
   const formSubmitHandler = useCallback(() => {
-    for (const input in formState.inputs) {
-      formDispatch({
-        type: "CHANGE",
-        value: formState.inputs[input].value,
-        input: input,
-      });
-      formDispatch({
-        type: "BLUR",
-        input: input,
-      });
+    if (formState.isValid) {
+      for (const input in formState.inputs) {
+        formDispatch({
+          type: "CHANGE",
+          value: formState.inputs[input].value,
+          input: input,
+        });
+        formDispatch({
+          type: "BLUR",
+          input: input,
+        });
+      }
     }
-  }, [formState.inputs]);
+  }, [formState.isValid, formState.inputs]);
 
   const formResetHandler = useCallback(() => {
     console.log("resetting");
