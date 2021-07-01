@@ -65,11 +65,16 @@ export const AccessTokenContextProvider = ({
   const logout = useCallback(async () => {
     await axios
       .post(`${process.env.REACT_APP_BACKEND_URI}/users/logout`, {})
+      .then((res) => {
+        console.log("refresh token removed");
+        setAccessToken("");
+        setTimeout(function () {
+          window.location.reload();
+        }, 100);
+      })
       .catch((error) => {
         console.log(error);
       });
-    setAccessToken("");
-    window.location.reload();
   }, []);
   //#endregion
 
@@ -92,7 +97,7 @@ export const AccessTokenContextProvider = ({
         }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
     setLoading(false);
   }, [login, logout]);
