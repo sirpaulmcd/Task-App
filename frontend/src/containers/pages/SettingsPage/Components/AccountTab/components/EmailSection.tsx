@@ -68,12 +68,17 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
   const submitHandler = async (e: any) => {
     e.preventDefault();
     if (formState.isValid) {
-      try {
-        await updateUserMutation();
-        setEmailUpdateSuccess(true);
-      } catch (error) {}
+      await updateUserMutation();
     }
   };
+
+  const invalidateEmailField = useCallback(() => {
+    formDispatch({
+      type: "INVALIDATE",
+      errorMessage: "Email is already taken.",
+      input: "email",
+    });
+  }, [formDispatch]);
   //#endregion
 
   //#region Update user mutation ----------------------------------------------
@@ -84,9 +89,10 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
       })
       .then((res) => {
         setUser(res.data);
+        setEmailUpdateSuccess(true);
       })
       .catch((error) => {
-        console.log(error);
+        invalidateEmailField();
       });
   };
   //#endregion
@@ -99,14 +105,10 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
       })
       .catch((error) => {
         if (formState.inputs.email.value !== user.email) {
-          formDispatch({
-            type: "INVALIDATE",
-            errorMessage: "Email is already taken.",
-            input: "email",
-          });
+          invalidateEmailField();
         }
       });
-  }, [formDispatch, formState.inputs.email.value, user.email]);
+  }, [formState.inputs.email.value, user.email, invalidateEmailField]);
 
   /**
    * Reference to email text field. Used to check if user is done typing.
@@ -138,6 +140,12 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
     "Yes",
     submitHandler
   );
+
+  const handleUpdateButtonPress = () => {
+    if (formState.isValid && formState.inputs.email.value !== user.email) {
+      handleAlertDialogOpen();
+    }
+  };
   //#endregion
 
   //#region TSX ---------------------------------------------------------------
@@ -184,7 +192,7 @@ export const EmailSection: React.FC<EmailSectionProps> = () => {
               className={`${classes.emailSection_submitButton} ${classes.emailSection_formItem}`}
               variant="contained"
               color="primary"
-              onClick={handleAlertDialogOpen}
+              onClick={handleUpdateButtonPress}
             >
               Update email
             </Button>

@@ -75,14 +75,17 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
   const submitHandler = async (e: any) => {
     e.preventDefault();
     if (formState.isValid) {
-      try {
-        await updateUserMutation();
-        setUsernameUpdateSuccess(true);
-      } catch (error) {
-        console.log(error);
-      }
+      await updateUserMutation();
     }
   };
+
+  const invalidateUsernameField = useCallback(() => {
+    formDispatch({
+      type: "INVALIDATE",
+      errorMessage: "Username is already taken.",
+      input: "username",
+    });
+  }, [formDispatch]);
   //#endregion
 
   //#region Update user mutation ----------------------------------------------
@@ -93,9 +96,10 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
       })
       .then((res) => {
         setUser(res.data);
+        setUsernameUpdateSuccess(true);
       })
       .catch((error) => {
-        console.log(error);
+        invalidateUsernameField();
       });
   };
   //#endregion
@@ -108,14 +112,10 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
       })
       .catch((error) => {
         if (formState.inputs.username.value !== user.username) {
-          formDispatch({
-            type: "INVALIDATE",
-            errorMessage: "Username is already taken.",
-            input: "username",
-          });
+          invalidateUsernameField();
         }
       });
-  }, [formDispatch, formState.inputs.username.value, user.username]);
+  }, [formState.inputs.username.value, user.username, invalidateUsernameField]);
 
   /**
    * Reference to username text field. Used to check if user is done typing.
@@ -150,6 +150,15 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
     "Yes",
     submitHandler
   );
+
+  const handleUpdateButtonPress = () => {
+    if (
+      formState.isValid &&
+      formState.inputs.username.value !== user.username
+    ) {
+      handleAlertDialogOpen();
+    }
+  };
   //#endregion
 
   //#region TSX ---------------------------------------------------------------
@@ -197,7 +206,7 @@ export const UsernameSection: React.FC<UsernameSectionProps> = () => {
               className={`${classes.usernameSection_submitButton} ${classes.usernameSection_formItem}`}
               variant="contained"
               color="primary"
-              onClick={handleAlertDialogOpen}
+              onClick={handleUpdateButtonPress}
             >
               Update username
             </Button>

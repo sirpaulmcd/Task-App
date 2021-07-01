@@ -88,7 +88,7 @@ const SignInForm: React.FC<SignInFormProps> = () => {
         });
         formDispatch({
           type: "INVALIDATE",
-          errorMessage: "Email and password combination is invalid.",
+          errorMessage: "Invalid email and password combination.",
           input: "email",
         });
         formDispatch({
