@@ -66,11 +66,8 @@ export const AccessTokenContextProvider = ({
     await axios
       .post(`${process.env.REACT_APP_BACKEND_URI}/users/logout`, {})
       .then((res) => {
-        console.log("refresh token removed");
         setAccessToken("");
-        setTimeout(function () {
-          window.location.reload();
-        }, 100);
+        window.location.reload();
       })
       .catch((error) => {
         console.log(error);

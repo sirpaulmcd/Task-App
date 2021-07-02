@@ -23,9 +23,9 @@ const generateJWT = (payload, secret, durationString = "1 minute") => {
 const appendTokenToResponseAsCookie = (res, cookieName, token, path) => {
   res.cookie(cookieName, token, {
     httpOnly: true,
-    // secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === "production",
     path: path,
-    //domain: 'example.com', TODO: Set cookie domain
+    domain: process.env.DOMAIN,
     overwrite: true,
   });
 };
