@@ -25,7 +25,6 @@ const appendTokenToResponseAsCookie = (res, cookieName, token, path) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     path: path,
-    domain: process.env.DOMAIN,
     overwrite: true,
   });
 };

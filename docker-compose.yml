@@ -41,7 +41,6 @@ services:
       - BACKEND_PORT=${BACKEND_PORT}
       - DB_PORT=${DB_PORT}
       - NODE_ENV=${NODE_ENV}
-      - DOMAIN=${DOMAIN}
     command: ${BACKEND_COMMAND}
   db:
     image: ${DB_IMAGE}
