@@ -75,7 +75,7 @@ Task App is deployed using:
 
 ## Learning
 
-I chose a To-Do List style application because I didn't want to reinvent the wheel on my first attempt at a full-stack web application. Although the app may seem rather simple, I was surprised to find out how much critical thinking goes on behind the scenes of a typical web application. To create/deploy this Task App, I needed to take in an ocean of knowledge. To help get my point across, I've organized some noteworthy technologies/concepts that were necessary for this project.
+I chose a To-Do List style application because I didn't want to reinvent the wheel on my first attempt at a full-stack web application. Going in, I thought this project would be relatively simple. However, I was surprised to see how much critical thinking goes on behind the scenes of a typical web application. To create/deploy Task App, I needed to take in an ocean of knowledge. To help get my point across, I've organized some noteworthy technologies/concepts that were necessary for this project.
 
 **General Web Development**
 
@@ -93,7 +93,7 @@ I chose a To-Do List style application because I didn't want to reinvent the whe
 - React-transition-group library
 - Dynamic routing
 - Axios API interactions and related data management
-- Responsive styling for page resizing (CSSGrid and Flexbox)
+- CSSGrid and Flexbox (Responsive styling for page resizing)
 
 **Backend API**
 
@@ -101,7 +101,7 @@ I chose a To-Do List style application because I didn't want to reinvent the whe
 - Postman (API development tool)
 - Password storage (hash and salt)
 - Managing authentication tokens/cookies
-- CRUD operations with database
+- Database CRUD operations
 - Sorting, filtering, and pagination
 - File uploads
 - API testing (supertest)
@@ -123,7 +123,7 @@ I chose a To-Do List style application because I didn't want to reinvent the whe
 - Registering and configuring internet domain names
 - Certbot (enalbing HTTPS)
 
-Needless to say, I'm glad to have this project under my belt. Creating and deploying a full-stack application for the first time is a huge milestone for me and I feel much more competent than when I started.
+Needless to say, I'm glad to have this project under my belt. Creating and deploying a full-stack application for the first time is a huge milestone for me and I feel much more competent as a developer than when I started.
 
 ## Moving Forward
 
@@ -132,6 +132,6 @@ Backlog (if I feel like it):
 - Implement custom user lists (currently, users can only use premade list categories)
 - User list sharing (let multiple users view/manage the same list)
 - Continuous Integration (server automatically serves latest docker image)
-- Email verification
+- Email verification and password recovery
 - Due date notifications
 - Recurring tasks
