@@ -29,7 +29,7 @@ const useTaskStyles = makeStyles((theme) => ({
     justifyContent: "flex-end",
     alignItems: "center",
     width: "25%",
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down(450)]: {
       flexDirection: "column",
       justifyContent: "flex-start",
       alignItems: "flex-end",
@@ -46,6 +46,9 @@ const useTaskStyles = makeStyles((theme) => ({
   },
   task_titleText: {
     lineHeight: 1.2,
+    [theme.breakpoints.down(450)]: {
+      marginTop: "5px",
+    },
   },
   task_dueDateTimeText: {},
   task_categoryText: {

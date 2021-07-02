@@ -24,7 +24,7 @@ const LandingPage: React.FC<LandingPageProps> = () => {
           variant="h5"
           align="center"
         >
-          Manage your TODO style tasks
+          Manage your TODO style tasks on desktop or mobile
         </Typography>
         <img
           className={classes.landingPage_image}
