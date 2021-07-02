@@ -10,6 +10,7 @@ import {
   ListItemText,
 } from "@material-ui/core";
 
+import { useAccessTokenContext } from "../../../contexts/AccessTokenContext";
 import useAuthenticatedDrawerStyles from "./AuthenticatedDrawerStyles";
 
 interface AuthenticatedDrawerProps {
@@ -23,6 +24,10 @@ export const AuthenticatedDrawer: React.FC<AuthenticatedDrawerProps> = ({
 }) => {
   //#region Styles ------------------------------------------------------------
   const classes = useAuthenticatedDrawerStyles();
+  //#endregion
+
+  //#region Context -----------------------------------------------------------
+  const auth: any = useAccessTokenContext();
   //#endregion
 
   //#region Routing -----------------------------------------------------------
@@ -75,7 +80,7 @@ export const AuthenticatedDrawer: React.FC<AuthenticatedDrawerProps> = ({
         </List>
         <Divider />
         <List>
-          <ListItem button onClick={toggleDrawerHandler}>
+          <ListItem button onClick={auth.logout}>
             <ListItemText primary="Sign out" />
           </ListItem>
         </List>
