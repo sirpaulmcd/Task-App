@@ -20,15 +20,26 @@ import useTaskStyles from "./TaskStyles";
 interface TaskProps {
   task: any;
   getUserTasks: () => Promise<void>;
+  setDoneTaskSnackbarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setUndoneTaskSnackbarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
+const Task: React.FC<TaskProps> = ({
+  task,
+  getUserTasks,
+  setDoneTaskSnackbarOpen,
+  setUndoneTaskSnackbarOpen,
+}) => {
   //#region Styles ------------------------------------------------------------
   const classes = useTaskStyles();
   //#endregion
 
   //#region Routing -----------------------------------------------------------
   const params: any = useParams();
+  //#endregion
+
+  //#region Local state -------------------------------------------------------
+  const [transitionIn, setTransitionIn] = useState(true);
   //#endregion
 
   //#region Update task completion status mutation ----------------------------
@@ -39,7 +50,9 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
       })
       .then(async (res) => {
         if (res.status === 200 && getUserTasks) {
-          await getUserTasks();
+          setTimeout(async () => {
+            await getUserTasks();
+          }, 200);
         }
       })
       .catch((error) => {
@@ -54,7 +67,9 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
       .delete(`${process.env.REACT_APP_BACKEND_URI}/tasks/${task._id}`)
       .then(async (res) => {
         if (res.status === 200 && getUserTasks) {
-          await getUserTasks();
+          setTimeout(async () => {
+            await getUserTasks();
+          }, 200);
         }
       })
       .catch((error) => {
@@ -103,9 +118,24 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   );
   //#endregion
 
-  //#region Check box ---------------------------------------------------------
-  const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    toggleTaskCompletionMutation(event.target.id);
+  //#region Checkbox functionality --------------------------------------------
+  const handleCheckBoxChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTransitionIn(false);
+    if (!task.completed) {
+      setDoneTaskSnackbarOpen(true);
+    } else {
+      setUndoneTaskSnackbarOpen(true);
+    }
+    await toggleTaskCompletionMutation(event.target.id);
+  };
+  //#endregion
+
+  //#region Delete button functionality ---------------------------------------
+  const handleDeleteButtonPress = async () => {
+    setTransitionIn(false);
+    await deleteTaskMutation();
   };
   //#endregion
 
@@ -135,48 +165,51 @@ const Task: React.FC<TaskProps> = ({ task, getUserTasks }) => {
   ) {
     categoryFieldContent = (
       <>
-        <Typography className={classes.task_categoryText} variant="body2">
-          {task.category}
-        </Typography>
+        <Fade in={true}>
+          <Typography className={classes.task_categoryText} variant="body2">
+            {task.category}
+          </Typography>
+        </Fade>
       </>
     );
   }
+
   const taskContent = (
     <>
-      <li key={task._id}>
-        <Paper className={classes.task_paper}>
-          <div className={classes.task_leftContainer}>
-            <div className={classes.task_checkBoxContainer}>
-              <Checkbox
-                id={task._id}
-                checked={task.completed}
-                onChange={handleCheckBoxChange}
-                inputProps={{ "aria-label": "primary checkbox" }}
-              />
+      <Fade in={transitionIn}>
+        <li key={task._id}>
+          <Paper className={classes.task_paper}>
+            <div className={classes.task_leftContainer}>
+              <div className={classes.task_checkBoxContainer}>
+                <Checkbox
+                  id={task._id}
+                  checked={task.completed}
+                  onChange={handleCheckBoxChange}
+                  inputProps={{ "aria-label": "primary checkbox" }}
+                />
+              </div>
+              <div className={classes.task_infoContainer}>
+                <Typography className={classes.task_titleText} variant="h6">
+                  {task.title}
+                </Typography>
+                {dateFieldContent}
+                {categoryFieldContent}
+              </div>
             </div>
-            <div className={classes.task_infoContainer}>
-              <Typography className={classes.task_titleText} variant="h6">
-                {task.title}
-              </Typography>
-              {dateFieldContent}
-              {categoryFieldContent}
+            <div className={classes.task_rightContainer}>
+              <IconButton
+                aria-label="delete"
+                onClick={handleUpdateTaskModalOpen}
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton aria-label="delete" onClick={handleDeleteButtonPress}>
+                <DeleteIcon />
+              </IconButton>
             </div>
-          </div>
-          <div className={classes.task_rightContainer}>
-            <IconButton aria-label="delete" onClick={handleUpdateTaskModalOpen}>
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              onClick={async () => {
-                await deleteTaskMutation();
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </div>
-        </Paper>
-      </li>
+          </Paper>
+        </li>
+      </Fade>
     </>
   );
   //#endregion

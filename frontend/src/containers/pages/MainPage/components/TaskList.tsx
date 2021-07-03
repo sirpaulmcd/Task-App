@@ -10,6 +10,7 @@ import {
   Fade,
   Modal,
   Paper,
+  Snackbar,
   Typography,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
@@ -116,6 +117,34 @@ const TaskList: React.FC<TaskListProps> = () => {
   );
   //#endregion
 
+  //#region Snack bar ---------------------------------------------------------
+  const [doneTaskSnackbarOpen, setDoneTaskSnackbarOpen] = useState(false);
+  const [undoneTaskSnackbarOpen, setUndoneTaskSnackbarOpen] = useState(false);
+
+  const snackbarContent = (
+    <>
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={doneTaskSnackbarOpen}
+        onClose={() => {
+          setDoneTaskSnackbarOpen(false);
+        }}
+        message={"Task moved to 'Finished' list"}
+        autoHideDuration={1500}
+      />
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={undoneTaskSnackbarOpen}
+        onClose={() => {
+          setUndoneTaskSnackbarOpen(false);
+        }}
+        message={"Task returned to original list"}
+        autoHideDuration={1500}
+      />
+    </>
+  );
+  //#endregion
+
   //#region Task content ------------------------------------------------------
   const taskShouldRender = (task: any): boolean => {
     return (
@@ -138,7 +167,13 @@ const TaskList: React.FC<TaskListProps> = () => {
           {tasks.map((task: any) => {
             if (taskShouldRender(task)) {
               return (
-                <Task key={task._id} task={task} getUserTasks={getUserTasks} />
+                <Task
+                  key={task._id}
+                  task={task}
+                  getUserTasks={getUserTasks}
+                  setDoneTaskSnackbarOpen={setDoneTaskSnackbarOpen}
+                  setUndoneTaskSnackbarOpen={setUndoneTaskSnackbarOpen}
+                />
               );
             }
             return null;
@@ -180,6 +215,7 @@ const TaskList: React.FC<TaskListProps> = () => {
   //#region TSX ---------------------------------------------------------------
   return (
     <>
+      {snackbarContent}
       {newTaskModalContent}
       {tasks.length === 0 ? noTasksContent : tasksContent}
       <div className={classes.taskList_fabContainer}>
