@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Button, ButtonGroup, Paper } from "@material-ui/core";
+import { Button, ButtonGroup, Fade, Paper } from "@material-ui/core";
 
 import { AccountTab } from "./Components/AccountTab/AccountTab";
 import { AppearanceTab } from "./Components/AppearanceTab/AppearanceTab";
@@ -47,18 +47,22 @@ export const SettingsPage: React.FC<SettingsPageProps> = () => {
   return (
     <>
       <div className={classes.settingsPage_gridContainer}>
-        <Paper className={classes.settingsPage_tabButtonPaper}>
-          <ButtonGroup orientation="vertical" size="large" fullWidth>
-            <Button disabled>Settings</Button>
-            <Button onClick={tabClickHandler}>profile</Button>
-            <Button onClick={tabClickHandler}>account</Button>
-            <Button onClick={tabClickHandler}>appearance</Button>
-            <Button onClick={tabClickHandler}>security</Button>
-          </ButtonGroup>
-        </Paper>
-        <Paper className={classes.settingsPage_selectedTabPaper}>
-          {tabContent}
-        </Paper>
+        <Fade in={true}>
+          <Paper className={classes.settingsPage_tabButtonPaper}>
+            <ButtonGroup orientation="vertical" size="large" fullWidth>
+              <Button disabled>Settings</Button>
+              <Button onClick={tabClickHandler}>profile</Button>
+              <Button onClick={tabClickHandler}>account</Button>
+              <Button onClick={tabClickHandler}>appearance</Button>
+              <Button onClick={tabClickHandler}>security</Button>
+            </ButtonGroup>
+          </Paper>
+        </Fade>
+        <Fade in={true}>
+          <Paper className={classes.settingsPage_selectedTabPaper}>
+            {tabContent}
+          </Paper>
+        </Fade>
       </div>
     </>
   );

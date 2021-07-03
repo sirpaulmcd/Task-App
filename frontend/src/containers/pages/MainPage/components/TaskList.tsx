@@ -188,25 +188,30 @@ const TaskList: React.FC<TaskListProps> = () => {
   if (initialized) {
     noTasksContent = (
       <>
-        <Container className={classes.taskList_noTasksContainer} maxWidth="sm">
-          <Typography
-            className={classes.taskList_noTasksText}
-            align="center"
-            variant="h3"
+        <Fade in={true}>
+          <Container
+            className={classes.taskList_noTasksContainer}
+            maxWidth="sm"
           >
-            <AssignmentTurnedInIcon fontSize="inherit" />
-            <br />
-            No Tasks
-          </Typography>
-          <Button
-            className={classes.taskList_newTaskButton}
-            variant="outlined"
-            size="large"
-            onClick={handleNewTaskModalOpen}
-          >
-            Create new task
-          </Button>
-        </Container>
+            <Typography
+              className={classes.taskList_noTasksText}
+              align="center"
+              variant="h3"
+            >
+              <AssignmentTurnedInIcon fontSize="inherit" />
+              <br />
+              No Tasks
+            </Typography>
+            <Button
+              className={classes.taskList_newTaskButton}
+              variant="outlined"
+              size="large"
+              onClick={handleNewTaskModalOpen}
+            >
+              Create new task
+            </Button>
+          </Container>
+        </Fade>
       </>
     );
   }
