@@ -165,7 +165,6 @@ export const useForm = (initialInputs: any, initialFormValidity: any) => {
   }, [formState.isValid, formState.inputs]);
 
   const formResetHandler = useCallback(() => {
-    console.log("resetting");
     for (const input in formState.inputs) {
       formDispatch({
         type: "CHANGE",
