@@ -46,7 +46,7 @@ const TaskList: React.FC<TaskListProps> = () => {
       categoryParameter += `&category=${params.taskList}`;
     }
   }
-  let taskUrl = `${process.env.REACT_APP_BACKEND_URI}/tasks?sortBy=dueDateTime:asc${completionParameter}${categoryParameter}`;
+  let taskUrl = `${process.env.REACT_APP_BACKEND_URI}/tasks?sortBy=dueDateTime:desc${completionParameter}${categoryParameter}`;
 
   const getUserTasks = useCallback(async () => {
     await axios
